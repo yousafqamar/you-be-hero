@@ -1,0 +1,28 @@
+{
+  "apiVersion": 2,
+  "name": "donation-widget/ybh-chekcout-donation-block",
+  "title": "YouBeHero Donation Widget",
+  "category": "woocommerce",
+  "icon": "smiley",
+  "example": {},
+  "supports": {
+    "html": true
+  },
+  "description": "A block for adding a donation widget to the checkout page.",
+  "attributes": {
+    "causes": {
+      "type": "array",
+      "default": [
+        { "label": "Organization 1", "value": "10" },
+        { "label": "Organization 2", "value": "20" },
+        { "label": "Organization 3", "value": "25" }
+      ]
+    },
+    "amounts": {
+      "type": "array",
+      "default": [10, 20, 50, 100]
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

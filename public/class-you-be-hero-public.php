@@ -95,7 +95,24 @@ class You_Be_Hero_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+                if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+                    wp_enqueue_script(
+                        'custom-checkout-fields',
+                        plugin_dir_url( __FILE__ ) . 'js/custom-checkout.js',
+//                        [ 'wp-element', 'wc-blocks-checkout' ], // Dependencies
+                       [ 'lodash', 'react', 'wc-blocks-checkout', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n' ], // Ensure required dependencies
+                        filemtime( plugin_dir_path( __FILE__ ) . 'js/custom-checkout.js' ),
+                        true
+                    );
 
+                    // Add "type=module" attribute to the script
+                    add_filter( 'script_loader_tag', function( $tag, $handle ) {
+                        if ( 'custom-checkout-fields' === $handle ) {
+                            return str_replace( 'src', 'type="module" src', $tag );
+                        }
+                        return $tag;
+                    }, 10, 2 );
+                }
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/you-be-hero-public.js', array( 'jquery' ), $this->version, false );
 
 	}
@@ -132,7 +149,202 @@ class You_Be_Hero_Public {
         }
 
     }
+    
+    
+        // Register the block
+        function donation_widget_register_block() {
+            // Register the block using metadata from block.json
+            register_block_type(YBH_PLUGIN_DIR . '/build');
+        }
 
+        // Enqueue scripts and styles
+        function donation_widget_enqueue_scripts() {
+            if (is_checkout()) {
+                // Fetch data from the API
+                $data = $this->donation_widget_fetch_data();
+
+
+                wp_enqueue_style('donation-widget-style', plugins_url('assets/css/style.css', __FILE__));
+                wp_enqueue_script('donation-widget-script', plugins_url('assets/js/script.js', __FILE__), array('jquery'), null, true);
+                if ($data) {
+                    // Extract causes and amounts
+                    $causes = array_map(function ($cause) {
+                        return [
+                            'label' => $cause['name'],
+                            'value' => $cause['id'],
+                            'image' => $cause['image']
+                        ];
+                    }, $data['selected_causes']);
+
+                    $amounts = array_values($data['donation_settings']['fixed_amounts']);
+
+                    // Localize script with the data
+                    wp_localize_script('donation-widget-script', 'ybh_donation_checkout_params', array(
+                        'ajax_url' => admin_url('admin-ajax.php'),
+                        'causes'   => $causes,
+                        'amounts'  => $amounts,
+                    ));
+                }
+            }
+        }
+        // Add donation fee to cart
+        function donation_widget_add_fee($cart) {
+            
+            $donation_amount = WC()->session->get( 'ybh_donation_amount', 0 );
+            $donation_cause = WC()->session->get( 'ybh_donation_cause', '' );
+            if ( empty($donation_amount) || (is_admin() && !is_ajax()) ) {
+                return;
+            }
+
+            if (!empty($donation_amount) && !empty($donation_cause)) {
+                $donation_amount = floatval($donation_amount);
+                $donation_cause = sanitize_text_field($donation_cause);
+
+                if ($donation_amount > 0) {
+                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
+                    WC()->cart->add_fee($fee_title, $donation_amount);
+                }
+            }
+        }
+        // Handle AJAX request
+        function donation_widget_update_fee() {
+        //    echo 'donation_widget_update_fee';
+            if (isset($_POST['donation_amount']) && isset($_POST['donation_cause'])) {
+                $donation_amount = floatval($_POST['donation_amount']);
+                $donation_cause = sanitize_text_field($_POST['donation_cause']);
+                
+                if ($donation_amount > 0) {
+                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
+                    
+                    WC()->session->set( 'ybh_donation_amount', $donation_amount );
+                    WC()->session->set( 'ybh_donation_cause', $donation_cause );
+                    WC()->cart->add_fee($fee_title, $donation_amount);
+                    wp_send_json_success( [ 'message' => 'Donation saved', $ybh_donation_cause=>$ybh_donation_amount ] );
+                }
+
+            } else {
+                wp_send_json_error( [ 'message' => 'No donation provided' ] );
+            }
+            wp_die();
+        }
+        function donation_widget_fetch_data() {
+            $response = wp_remote_get('https://yousafqamar.com/youbehero.json'); // Replace with the actual API endpoint
+            if (is_wp_error($response)) {
+                return false;
+            }
+
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !isset($data['data'])) {
+                return false;
+            }
+
+            return $data['data'];
+        }
+
+
+        function save_custom_data_from_session($order, $data) {
+            // Retrieve custom data from the session
+            $ybh_donation_amount = WC()->session->get('ybh_donation_amount');
+            $ybh_donation_cause = WC()->session->get('ybh_donation_cause');
+
+            if ($ybh_donation_amount && $ybh_donation_cause ) {
+                $item = new WC_Order_Item_Product();
+                $item->set_name( __( $ybh_donation_cause, 'you-be-hero' ) ); // Custom item name
+                $item->set_product_id( 0 ); // No actual product
+                $item->set_subtotal( $ybh_donation_amount );
+                $item->set_total( $ybh_donation_amount );
+                $order->add_item( $item );
+
+            }    
+        }
+
+        function woocommerce_checkout_update_order_meta_fun($order_id, $data) {
+            // Retrieve custom data from the session
+            $ybh_donation_amount = WC()->session->get('ybh_donation_amount');
+            $ybh_donation_cause = WC()->session->get('ybh_donation_cause');
+
+            if ($ybh_donation_amount && $ybh_donation_cause ) {
+
+                // Add custom data to the order meta
+                $order_id = $order->get_id(); 
+                update_post_meta($order_id, '_ybh_donation_amount', $ybh_donation_amount);
+                update_post_meta($order_id, '_ybh_donation_cause', $ybh_donation_cause);
+        //        
+                // Clear the session data
+                WC()->session->__unset('ybh_donation_amount');
+                WC()->session->__unset('ybh_donation_cause');
+            }    
+        }
+
+        function woocommerce_get_order_item_totals_fun( $totals, $order ) {
+            $donation_cause = get_post_meta( $order->get_id(), '_ybh_donation_cause', true );
+//        echo '$donation_cause: '.$donation_cause;
+            if ( ! empty( $donation_cause ) ) {
+                foreach ( $order->get_fees() as $fee ) {
+                    if ( strpos( $fee->get_name(), $donation_cause ) !== false ) {
+                        foreach ( $totals as $key => &$total ) {
+                            echo '$key: '.$key;
+                            if ( strpos( $total['label'], $fee->get_name() ) !== false ) {
+                                $total['label'] = __( 'Donation', 'you-be-hero' );
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $totals;
+        }
+    
+    // Display shortcode at selected position
+//    function ybh_display_donation_form() {
+//        $shortcode = get_option('ybh_donation_shortcode', '[ybh_donation_form]');
+//        echo do_shortcode($shortcode);
+//    }
+//
+//    function ybh_insert_donation_form() {
+//        $position = get_option('ybh_donation_position', 'woocommerce_after_checkout_billing_form');
+//        if (has_action($position)) {
+//            add_action($position, 'ybh_display_donation_form');
+//        }
+//    }
+
+    public function display_checkout_donation() {
+        $checkout_page_id = get_option('woocommerce_checkout_page_id');
+        if (!$checkout_page_id) return;
+
+        // Retrieve the stored meta value
+        $selected_position = get_post_meta($checkout_page_id, '_ybh_donation_position', true);
+        $selected_position = 'woocommerce_before_checkout_payment';
+//        var_dump('$selected_position');
+//        var_dump($selected_position);
+        if (empty($selected_position)) {
+            $selected_position = 'woocommerce_after_checkout_billing_form'; // Default
+        }
+
+        // Add the donation form at the selected WooCommerce hook
+        add_action($selected_position, function () {
+            echo '<div class="ybh-donation-form">';
+            echo '<h3>Support Us</h3>';
+            echo do_shortcode('[donation_form]'); // Replace with actual shortcode
+            echo '</div>';
+        });
+    }
+    
+    public function woocommerce_before_checkout_payment_fun($param) {
+        echo do_shortcode('[donation_form]'); // Replace with actual shortcode
+    }
+    
+    function ybh_register_checkout_meta() {
+        register_post_meta('post', '_ybh_donation_position', array(
+            'show_in_rest' => true,
+            'single' => true,
+            'type' => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+    }
+    
     /**
      * Function for public shortcodes
      * 
@@ -141,7 +353,7 @@ class You_Be_Hero_Public {
     public function youbehero_public_shortcodes() {
 
         $shortcodes_class = new ShortCodes_Public();
-
+        
     }
 
 }

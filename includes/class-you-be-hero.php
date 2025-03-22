@@ -165,6 +165,9 @@ class You_Be_Hero {
 
 		$plugin_admin = new You_Be_Hero_Admin( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'ybh_checkout_donation_register_settings' );
+		$this->loader->add_action( 'enqueue_block_editor_assets', $plugin_admin, 'ybh_enqueue_checkout_block_editor_assets' );
+		$this->loader->add_action( 'enqueue_block_editor_assets', $plugin_admin, 'ybh_donation_checkout_block_modifications' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
@@ -180,10 +183,23 @@ class You_Be_Hero {
 	private function define_public_hooks() {
 
 		$plugin_public = new You_Be_Hero_Public( $this->get_plugin_name(), $this->get_version() );
+                
+		$this->loader->add_action( 'wp', $plugin_public, 'display_checkout_donation' );
+//		$this->loader->add_action( 'woocommerce_before_checkout_payment', $plugin_public, 'woocommerce_before_checkout_payment_fun' );
+		$this->loader->add_action( 'woocommerce_cart_calculate_fees', $plugin_public, 'donation_widget_add_fee' );
+		$this->loader->add_action( 'wp_ajax_update_donation_fee', $plugin_public, 'donation_widget_update_fee' );
+		$this->loader->add_action( 'wp_ajax_nopriv_update_donation_fee', $plugin_public, 'donation_widget_update_fee' );
+		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'woocommerce_checkout_update_order_meta_fun', 10, 2 );
+		$this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'save_custom_data_from_session', 10, 2 );
+		$this->loader->add_action( 'woocommerce_get_order_item_totals', $plugin_public, 'woocommerce_get_order_item_totals_fun', 10, 2 );
 
+		$this->loader->add_action( 'init', $plugin_public, 'donation_widget_register_block' );
+		$this->loader->add_action( 'init', $plugin_public, 'youbehero_public_shortcodes' );
+		$this->loader->add_action( 'init', $plugin_public, 'ybh_register_checkout_meta' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'donation_widget_enqueue_scripts' );
+                
 	}
 
 	/**

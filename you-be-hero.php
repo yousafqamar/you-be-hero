@@ -36,7 +36,48 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'YOU_BE_HERO_VERSION', '1.0.0' );
+// Plugin version.
+define('YBH_VERSION', '1.0.0');
+
+// Plugin base file.
+define('YBH_PLUGIN_FILE', __FILE__);
+
+// Plugin directory path.
+define('YBH_PLUGIN_DIR', plugin_dir_path(__FILE__));
+
+// Plugin URL.
+define('YBH_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+// Plugin basename.
+define('YBH_PLUGIN_BASENAME', plugin_basename(__FILE__));
+
+// Text domain for translations.
+define('YBH_TEXT_DOMAIN', 'you-be-hero');
+
+// Plugin slug (useful for hooks and filters).
+define('YBH_PLUGIN_SLUG', 'you-be-hero');
+
+// Plugin name.
+define('YBH_PLUGIN_NAME', 'YouBeHero');
+
+// Plugin author.
+define('YBH_PLUGIN_AUTHOR', 'Vasilis Kolip');
+
+// Plugin author URI.
+define('YBH_PLUGIN_AUTHOR_URI', 'https://youbehero.com/');
+
+// Plugin URI.
+define('YBH_PLUGIN_URI', 'https://youbehero.com');
+
+// Plugin license details.
+define('YBH_PLUGIN_LICENSE', 'GPL-2.0+');
+define('YBH_PLUGIN_LICENSE_URI', 'http://www.gnu.org/licenses/gpl-2.0.txt');
+
+// Directories for organized structure.
+define('YBH_PLUGIN_LANG_DIR', YBH_PLUGIN_DIR . 'languages/');
+define('YBH_PLUGIN_INCLUDES_DIR', YBH_PLUGIN_DIR . 'includes/');
+define('YBH_PLUGIN_ADMIN_DIR', YBH_PLUGIN_DIR . 'admin/');
+define('YBH_PLUGIN_PUBLIC_DIR', YBH_PLUGIN_DIR . 'public/');
 
 /**
  * The code that runs during plugin activation.

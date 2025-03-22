@@ -51,9 +51,33 @@ class You_Be_Hero_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
 	}
+        
+        function ybh_enqueue_checkout_block_editor_assets() {
+            wp_enqueue_script(
+                'ybh-checkout-block-settings',
+                plugins_url('js/checkout-block-settings.js', __FILE__),
+                array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-data', 'wp-compose', 'wc-blocks-checkout'),//'wp-element', 'wc-blocks-checkout'
+                filemtime(YBH_PLUGIN_ADMIN_DIR . 'js/checkout-block-settings.js'),
+                true
+            );
+        }
+        
+        // Register settings
+        function ybh_checkout_donation_register_settings() {
+            register_setting('ybh_checkout_donation_settings', 'ybh_donation_shortcode');
+            register_setting('ybh_checkout_donation_settings', 'ybh_donation_position');
+        }
 
+        function ybh_donation_checkout_block_modifications() {
+//            die(YBH_PLUGIN_URL.'admin/js/checkout-widget.js');
+            wp_enqueue_script(
+                'custom-checkout-widget',
+                YBH_PLUGIN_URL.'admin/js/checkout-widget.js',
+                array('wp-blocks', 'wp-edit-post', 'wp-hooks'),
+                filemtime(YBH_PLUGIN_ADMIN_DIR . '/js/checkout-widget.js')
+            );
+        }
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
