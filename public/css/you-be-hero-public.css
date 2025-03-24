@@ -19,3 +19,72 @@
     display: block;
     margin: 5px 0;
 }
+
+/* Donation cheeckout widget css */
+.donation-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 60%;
+}
+.donation-box h3 {
+    background: #ddd;
+    padding: 10px;
+    margin: -20px -20px 15px -20px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+}
+.donation-box p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.amount-box {
+    background: #e0e0e0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+    float: right;
+    color: #007bff;
+}
+.donation-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.donation-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+}
+.donation-item select {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    font-size: 14px;
+}
+.donation-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+.donation-buttons button {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #007bff;
+    background: white;
+    color: #007bff;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.donation-buttons button:last-child {
+    border-color: red;
+    color: red;
+}
