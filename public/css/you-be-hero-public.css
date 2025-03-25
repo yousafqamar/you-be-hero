@@ -26,7 +26,7 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 60%;
+    margin-bottom: 20px;
 }
 .donation-box h3 {
     background: #ddd;
@@ -74,7 +74,7 @@
     gap: 10px;
     justify-content: space-between;
 }
-.donation-buttons button {
+.donation-buttons button, .donation-buttons .radio-button {
     flex: 1;
     padding: 8px;
     border: 1px solid #007bff;
@@ -84,7 +84,13 @@
     cursor: pointer;
     border-radius: 5px;
 }
-.donation-buttons button:last-child {
+.donation-buttons button:last-child,.donation-buttons .radio-button:last-child {
     border-color: red;
     color: red;
+}
+
+
+.visually-hidden {
+  position: absolute;
+  opacity: 0;
 }

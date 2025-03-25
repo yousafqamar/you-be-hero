@@ -1,63 +1,63 @@
 jQuery(document).ready(function($) {
-    const { causes, amounts } = ybh_donation_checkout_params;
-
-    // Populate causes and amounts
-    const $causeSelect = $('#donation-cause');
-    const $amountsContainer = $('#donation-amounts');
-
-    causes.forEach((cause) => {
-        //$causeSelect.append(`<option value="${cause.value}">${cause.label}</option>`);
-    });
-
-    amounts.forEach((amount) => {
-        amount = parseInt(amount)
-        $amountsContainer.append(`
-            <label>
-                <input type="radio" name="donation_amount" value="${amount}"> $${amount}
-            </label>
-        `);
-    });
+//    const { causes, amounts } = ybh_donation_checkout_params;
+//
+//    // Populate causes and amounts
+//    const $causeSelect = $('#donation-cause');
+//    const $amountsContainer = $('#donation-amounts');
+//
+//    causes.forEach((cause) => {
+//        //$causeSelect.append(`<option value="${cause.value}">${cause.label}</option>`);
+//    });
+//
+//    amounts.forEach((amount) => {
+//        amount = parseInt(amount)
+//        $amountsContainer.append(`
+//            <label>
+//                <input type="radio" name="donation_amount" value="${amount}"> $${amount}
+//            </label>
+//        `);
+//    });
 
     // Handle dynamic updates
-    $('#donation-amounts input[type="radio"]').change(function() {
-        const donation_amount = $(this).val();
-        const donation_cause = $('#donation-cause').val();
-console.log(donation_amount);
-        if (donation_amount && donation_cause) {
-            $.ajax({
-                type: 'POST',
-                url: ybh_donation_checkout_params.ajax_url,
-                data: {
-                    action: 'update_donation_fee',
-                    donation_amount: donation_amount,
-                    donation_cause: donation_cause
-                },
-                success: function(response) {
-                    $('body').trigger('update_checkout');
-                }
-            });
-        }
-    });
+//    $('#donation-amounts input[type="radio"]').change(function() {
+//        const donation_amount = $(this).val();
+//        const donation_cause = $('#donation-cause').val();
+//console.log(donation_amount);
+//        if (donation_amount && donation_cause) {
+//            $.ajax({
+//                type: 'POST',
+//                url: ybh_donation_checkout_params.ajax_url,
+//                data: {
+//                    action: 'update_donation_fee',
+//                    donation_amount: donation_amount,
+//                    donation_cause: donation_cause
+//                },
+//                success: function(response) {
+//                    $('body').trigger('update_checkout');
+//                }
+//            });
+//        }
+//    });
 
-    $('#donation-cause').change(function() {
-        const donation_cause = $(this).val();
-        const donation_amount = $('#donation-amounts input[type="radio"]:checked').val();
-console.log(donation_cause);
-        if (donation_amount && donation_cause) {
-            $.ajax({
-                type: 'POST',
-                url: ybh_donation_checkout_params.ajax_url,
-                data: {
-                    action: 'update_donation_fee',
-                    donation_amount: donation_amount,
-                    donation_cause: donation_cause
-                },
-                success: function(response) {
-                    $('body').trigger('update_checkout');
-                }
-            });
-        }
-    });
+//    $('#donation-cause').change(function() {
+//        const donation_cause = $(this).val();
+//        const donation_amount = $('#donation-amounts input[type="radio"]:checked').val();
+//console.log(donation_cause);
+//        if (donation_amount && donation_cause) {
+//            $.ajax({
+//                type: 'POST',
+//                url: ybh_donation_checkout_params.ajax_url,
+//                data: {
+//                    action: 'update_donation_fee',
+//                    donation_amount: donation_amount,
+//                    donation_cause: donation_cause
+//                },
+//                success: function(response) {
+//                    $('body').trigger('update_checkout');
+//                }
+//            });
+//        }
+//    });
 });
 
 

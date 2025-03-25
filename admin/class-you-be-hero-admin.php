@@ -78,6 +78,39 @@ class You_Be_Hero_Admin {
                 filemtime(YBH_PLUGIN_ADMIN_DIR . '/js/checkout-widget.js')
             );
         }
+        
+        function woocommerce_admin_order_totals_after_discount_fun($order_id) {
+            $order = wc_get_order($order_id);
+            $donation_total = 0;
+            $other_fees_total = 0;
+
+            foreach ($order->get_fees() as $fee) {
+                $fee_total = (float) $fee->get_total(); // Ensure proper numeric type
+
+                if (stripos($fee->get_name(), 'donation') !== false) {
+                    $donation_total += $fee_total;
+                } else {
+                    $other_fees_total += $fee_total;
+                }
+            }
+
+            if ($donation_total > 0) {
+                echo '<tr>';
+                echo '<td class="label">' . __('Donation:', 'woocommerce') . '</td>';
+                echo '<td width="1%"></td>';
+                echo '<td class="total"><strong>' . wc_price($donation_total) . '</strong></td>';
+                echo '</tr>';
+            }
+
+            if ($other_fees_total > 0) {
+                echo '<tr>';
+                echo '<td class="label">' . __('Other Fees:', 'woocommerce') . '</td>';
+                echo '<td width="1%"></td>';
+                echo '<td class="total"><strong>' . wc_price($other_fees_total) . '</strong></td>';
+                echo '</tr>';
+            }
+        }
+        
 	/**
 	 * Register the stylesheets for the admin area.
 	 *

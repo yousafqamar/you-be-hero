@@ -163,9 +163,8 @@ class You_Be_Hero_Public {
                 // Fetch data from the API
                 $data = $this->donation_widget_fetch_data();
 
-
-                wp_enqueue_style('donation-widget-style', plugins_url('assets/css/style.css', __FILE__));
-                wp_enqueue_script('donation-widget-script', plugins_url('assets/js/script.js', __FILE__), array('jquery'), null, true);
+                wp_enqueue_style('donation-widget-style', YBH_PLUGIN_URL.'assets/css/style.css');
+                wp_enqueue_script('donation-widget-script', YBH_PLUGIN_URL.'assets/js/script.js', array('jquery'), null, true);
                 if ($data) {
                     // Extract causes and amounts
                     $causes = array_map(function ($cause) {
@@ -188,24 +187,24 @@ class You_Be_Hero_Public {
             }
         }
         // Add donation fee to cart
-        function donation_widget_add_fee($cart) {
-            
-            $donation_amount = WC()->session->get( 'ybh_donation_amount', 0 );
-            $donation_cause = WC()->session->get( 'ybh_donation_cause', '' );
-            if ( empty($donation_amount) || (is_admin() && !is_ajax()) ) {
-                return;
-            }
-
-            if (!empty($donation_amount) && !empty($donation_cause)) {
-                $donation_amount = floatval($donation_amount);
-                $donation_cause = sanitize_text_field($donation_cause);
-
-                if ($donation_amount > 0) {
-                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
-                    WC()->cart->add_fee($fee_title, $donation_amount);
-                }
-            }
-        }
+//        function donation_widget_add_fee($cart) {
+//            
+//            $donation_amount = WC()->session->get( 'ybh_donation_amount', 0 );
+//            $donation_cause = WC()->session->get( 'ybh_donation_cause', '' );
+//            if ( empty($donation_amount) || (is_admin() && !is_ajax()) ) {
+//                return;
+//            }
+//
+//            if (!empty($donation_amount) && !empty($donation_cause)) {
+//                $donation_amount = floatval($donation_amount);
+//                $donation_cause = sanitize_text_field($donation_cause);
+//
+//                if ($donation_amount > 0) {
+//                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
+//                    WC()->cart->add_fee($fee_title, $donation_amount);
+//                }
+//            }
+//        }
         // Handle AJAX request
         function donation_widget_update_fee() {
         //    echo 'donation_widget_update_fee';
@@ -278,24 +277,24 @@ class You_Be_Hero_Public {
             }    
         }
 
-        function woocommerce_get_order_item_totals_fun( $totals, $order ) {
-            $donation_cause = get_post_meta( $order->get_id(), '_ybh_donation_cause', true );
-//        echo '$donation_cause: '.$donation_cause;
-            if ( ! empty( $donation_cause ) ) {
-                foreach ( $order->get_fees() as $fee ) {
-                    if ( strpos( $fee->get_name(), $donation_cause ) !== false ) {
-                        foreach ( $totals as $key => &$total ) {
-                            echo '$key: '.$key;
-                            if ( strpos( $total['label'], $fee->get_name() ) !== false ) {
-                                $total['label'] = __( 'Donation', 'you-be-hero' );
-                            }
-                        }
-                    }
-                }
-            }
-
-            return $totals;
-        }
+//        function woocommerce_get_order_item_totals_fun( $totals, $order ) {
+//            $donation_cause = get_post_meta( $order->get_id(), '_ybh_donation_cause', true );
+//        echo '$donation_cause: '.$donation_cause;die();
+//            if ( ! empty( $donation_cause ) ) {
+//                foreach ( $order->get_fees() as $fee ) {
+//                    if ( strpos( $fee->get_name(), $donation_cause ) !== false ) {
+//                        foreach ( $totals as $key => &$total ) {
+//                            echo '$key: '.$key;
+//                            if ( strpos( $total['label'], $fee->get_name() ) !== false ) {
+//                                $total['label'] = __( 'Donation', 'you-be-hero' );
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            return $totals;
+//        }
     
     // Display shortcode at selected position
 //    function ybh_display_donation_form() {

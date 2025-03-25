@@ -23,7 +23,7 @@ class ShortCodes_Public {
         ob_start();
         ?>
         <div class="donation-checkout-widget">
-            <script src="<?php echo YBH_PLUGIN_URL?>public/css/tailwindcss.3.4.16.css"></script>
+            <!--<script src="<?php echo YBH_PLUGIN_URL?>public/css/tailwindcss.3.4.16.css"></script>-->
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
             <style>
               /* Custom styles for the dropdown */

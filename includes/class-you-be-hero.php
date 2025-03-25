@@ -168,6 +168,7 @@ class You_Be_Hero {
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'ybh_checkout_donation_register_settings' );
 		$this->loader->add_action( 'enqueue_block_editor_assets', $plugin_admin, 'ybh_enqueue_checkout_block_editor_assets' );
 		$this->loader->add_action( 'enqueue_block_editor_assets', $plugin_admin, 'ybh_donation_checkout_block_modifications' );
+		$this->loader->add_action( 'woocommerce_admin_order_totals_after_discount', $plugin_admin, 'woocommerce_admin_order_totals_after_discount_fun' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
@@ -191,7 +192,7 @@ class You_Be_Hero {
 		$this->loader->add_action( 'wp_ajax_nopriv_update_donation_fee', $plugin_public, 'donation_widget_update_fee' );
 		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'woocommerce_checkout_update_order_meta_fun', 10, 2 );
 		$this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'save_custom_data_from_session', 10, 2 );
-		$this->loader->add_action( 'woocommerce_get_order_item_totals', $plugin_public, 'woocommerce_get_order_item_totals_fun', 10, 2 );
+//		$this->loader->add_action( 'woocommerce_get_order_item_totals', $plugin_public, 'woocommerce_get_order_item_totals_fun', 10, 2 );
 
 		$this->loader->add_action( 'init', $plugin_public, 'donation_widget_register_block' );
 		$this->loader->add_action( 'init', $plugin_public, 'youbehero_public_shortcodes' );
