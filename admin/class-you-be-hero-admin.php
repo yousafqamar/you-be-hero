@@ -157,4 +157,62 @@ class You_Be_Hero_Admin {
 
 	}
 
+    /**
+     * @return void
+     */
+    public function ybh_add_admin_menu() {
+        add_menu_page(
+            'YouBeHero API Settings',  // Page title
+            'YouBeHero',               // Menu title
+            'manage_options',          // Capability
+            'ybh-settings',            // Menu slug
+            array( $this, 'ybh_settings_page' ),       // Function to display content
+            'dashicons-admin-network', // Icon
+            56                         // Position
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function ybh_settings_page() {
+
+        $ybh_token = get_option( 'ybh_token' );
+
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/you-be-hero-api-settings.php';
+
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function ybh_get_token() {
+
+        $token = bin2hex(random_bytes( 32 / 2 ) );
+        update_option( 'ybh_token', sanitize_text_field( $token ) );
+        wp_send_json( ['success' => true, 'token' => $token] );
+
+//        $api_url = 'https://youbehero.com/shop/create-api-token';
+//
+//        $response = wp_remote_post($api_url, [
+//            'method'  => 'POST',
+//            'headers' => ['Content-Type' => 'application/json']
+//        ]);
+//
+//        if (is_wp_error($response)) {
+//            wp_send_json(['success' => false, 'message' => $response->get_error_message()]);
+//        }
+//
+//        $body = json_decode(wp_remote_retrieve_body($response), true);
+//
+//        if (!empty($body['token'])) {
+//            update_option('ybh_token', sanitize_text_field($body['token']));
+//            wp_send_json(['success' => true, 'token' => $body['token']]);
+//        } else {
+//            wp_send_json(['success' => false, 'message' => 'Failed to retrieve token.']);
+//        }
+
+    }
+
 }

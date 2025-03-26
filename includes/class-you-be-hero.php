@@ -172,7 +172,15 @@ class You_Be_Hero {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-	}
+        $this->loader->add_action( 'admin_menu', $plugin_admin, 'ybh_add_admin_menu' );
+        // Register setting to save token
+        add_action( 'admin_init', function() {
+            register_setting( 'ybh_settings_group', 'ybh_token' );
+        } );
+        // Handle AJAX request to fetch API token
+        $this->loader->add_action( 'wp_ajax_ybh_get_token', $plugin_admin,'ybh_get_token' );
+
+    }
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -200,7 +208,9 @@ class You_Be_Hero {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'donation_widget_enqueue_scripts' );
-                
+
+        $this->loader->add_action( 'woocommerce_order_status_completed', $plugin_public, 'ybh_send_api_on_order_complete', 10, 1 );
+
 	}
 
 	/**

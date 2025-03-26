@@ -355,4 +355,53 @@ class You_Be_Hero_Public {
         
     }
 
+    /**
+     * @param $order_id
+     * @return void
+     */
+    public function send_api_on_order_complete($order_id) {
+        if (!$order_id) {
+            return;
+        }
+
+        $order = wc_get_order($order_id);
+
+        $api_url = 'https://your-api-endpoint.com/webhook'; // Replace with your API endpoint
+
+        $data = [
+            'order_id'      => $order->get_id(),
+            'total'         => $order->get_total(),
+            'currency'      => $order->get_currency(),
+            'customer_email'=> $order->get_billing_email(),
+            'items'         => []
+        ];
+
+        // Get order items
+        foreach ($order->get_items() as $item) {
+            $data['items'][] = [
+                'product_id' => $item->get_product_id(),
+                'name'       => $item->get_name(),
+                'quantity'   => $item->get_quantity(),
+                'subtotal'   => $item->get_subtotal(),
+            ];
+        }
+
+        // Send API request
+        $response = wp_remote_post($api_url, [
+            'method'    => 'POST',
+            'body'      => json_encode($data),
+            'headers'   => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer YOUR_ACCESS_TOKEN' // Add API authentication if required
+            ]
+        ]);
+
+        // Log response (optional)
+        if (is_wp_error($response)) {
+            error_log('API Error: ' . $response->get_error_message());
+        } else {
+            error_log('API Response: ' . wp_remote_retrieve_body($response));
+        }
+    }
+
 }
