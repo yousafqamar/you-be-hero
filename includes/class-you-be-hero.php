@@ -73,7 +73,12 @@ class You_Be_Hero {
 			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'you-be-hero';
+                
+                // Try WooCommerce Blocks API first (modern approach)
+                add_action('woocommerce_blocks_loaded', [$this, 'register_blocks_endpoint'], 20);
 
+                // Fallback for cases where Blocks API isn't available
+                add_action('rest_api_init', [$this, 'register_fallback_endpoint'], 20);
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
@@ -172,15 +177,15 @@ class You_Be_Hero {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-        $this->loader->add_action( 'admin_menu', $plugin_admin, 'ybh_add_admin_menu' );
-        // Register setting to save token
-        add_action( 'admin_init', function() {
-            register_setting( 'ybh_settings_group', 'ybh_token' );
-        } );
-        // Handle AJAX request to fetch API token
-        $this->loader->add_action( 'wp_ajax_ybh_get_token', $plugin_admin,'ybh_get_token' );
+                $this->loader->add_action( 'admin_menu', $plugin_admin, 'ybh_add_admin_menu' );
+                // Register setting to save token
+                add_action( 'admin_init', function() {
+                    register_setting( 'ybh_settings_group', 'ybh_token' );
+                } );
+                // Handle AJAX request to fetch API token
+                $this->loader->add_action( 'wp_ajax_ybh_get_token', $plugin_admin,'ybh_get_token' );
 
-    }
+        }
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -213,6 +218,53 @@ class You_Be_Hero {
 
 	}
 
+    /**
+         * Preferred: Register with WooCommerce Blocks Store API
+         */
+        public function register_blocks_endpoint() {
+            if (!class_exists('WooCommerce\Blocks\StoreApi\SchemasController')) {
+                return; // Exit if Blocks API isn't available
+            }
+
+            require_once __DIR__ . '/class-youbehero-endpoint.php';
+
+            WooCommerce\Blocks\StoreApi\SchemasController::register(
+                'youbehero', 
+                'YouBeHero_Endpoint_Schema'
+            );
+            WooCommerce\Blocks\StoreApi\RoutesController::register(
+                'youbehero',
+                'YouBeHero_Endpoint_Route'
+            );
+        }
+
+        /**
+         * Fallback: Register as standard REST API endpoint
+         */
+        public function register_fallback_endpoint() {
+            // Only register fallback if Blocks API didn't work
+            if (class_exists('WooCommerce\Blocks\StoreApi\SchemasController')) {
+                die('ere');
+                return;
+            }
+
+            register_rest_route('wc/store', '/youbehero', [
+                'methods'  => WP_REST_Server::READABLE,
+                'callback' => [$this, 'handle_fallback_request'],
+                'permission_callback' => '__return_true',
+            ]);
+        }
+
+        /**
+         * Handle fallback endpoint requests
+         */
+        public function handle_fallback_request(WP_REST_Request $request) {
+            return [
+                'success'    => true,
+                'message'    => 'You be hero! (Fallback Endpoint)',
+                'timestamp' => current_time('mysql'),
+            ];
+        }
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *

@@ -29,14 +29,16 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
     jQuery(document).ready(function($) {
+        
         const { causes, amounts } = ybh_donation_checkout_params;
 
         // Populate causes and amounts
         const $causeSelect = $('#donation-cause');
         const $amountsContainer = $('#donation-amounts');
 
+        $causeSelect.html("");
         causes.forEach((cause) => {
-            //$causeSelect.append(`<option value="${cause.value}">${cause.label}</option>`);
+            $causeSelect.append(`<option value="${cause.value}">${cause.label}</option>`);
         });
 
         amounts.forEach((amount) => {
@@ -47,6 +49,27 @@
                 </label>
             `);
         });
+        
+        
+        function addDonation(donation_amount, donation_cause){
+            
+                wp.data.dispatch('wc/store/cart').setCartData({
+                    fees: [
+                        {
+                            name: donation_cause,
+                            totals: {
+                                currency_minor_unit: donation_amount,
+                                total: donation_amount * 100, // In cents (5.00 USD)
+                                total_tax: '0'
+                            }
+                        }
+                    ]
+                }).then((response) => {
+                    console.log('Donation added successfully!', response);
+                }).catch((error) => {
+                    console.error('Error adding Donation:', error);
+                });
+        }
 
         // Handle dynamic updates
         $('#donation-amounts input[type="radio"], .donation-amounts button').change(function() {
@@ -54,18 +77,7 @@
             const donation_cause = $('#donation-cause').val();
     console.log(donation_amount);
             if (donation_amount && donation_cause) {
-                $.ajax({
-                    type: 'POST',
-                    url: ybh_donation_checkout_params.ajax_url,
-                    data: {
-                        action: 'update_donation_fee',
-                        donation_amount: donation_amount,
-                        donation_cause: donation_cause
-                    },
-                    success: function(response) {
-                        $('body').trigger('update_checkout');
-                    }
-                });
+                addDonation( donation_amount, donation_cause );
             }
         });
 
@@ -74,18 +86,7 @@
             const donation_amount = $('#donation-amounts input[type="radio"]:checked').val();
     console.log(donation_cause);
             if (donation_amount && donation_cause) {
-                $.ajax({
-                    type: 'POST',
-                    url: ybh_donation_checkout_params.ajax_url,
-                    data: {
-                        action: 'update_donation_fee',
-                        donation_amount: donation_amount,
-                        donation_cause: donation_cause
-                    },
-                    success: function(response) {
-                        $('body').trigger('update_checkout');
-                    }
-                });
+                addDonation( donation_amount, donation_cause );
             }
         });
     });

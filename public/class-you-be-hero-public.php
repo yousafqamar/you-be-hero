@@ -52,8 +52,10 @@ class You_Be_Hero_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-	}
-
+            add_action('init', function() {
+                add_action( 'woocommerce_register_store_api_endpoints', [$this,'woocommerce_register_store_api_endpoints']);
+            });
+        }
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
 	 *
@@ -187,24 +189,24 @@ class You_Be_Hero_Public {
             }
         }
         // Add donation fee to cart
-//        function donation_widget_add_fee($cart) {
-//            
-//            $donation_amount = WC()->session->get( 'ybh_donation_amount', 0 );
-//            $donation_cause = WC()->session->get( 'ybh_donation_cause', '' );
-//            if ( empty($donation_amount) || (is_admin() && !is_ajax()) ) {
-//                return;
-//            }
-//
-//            if (!empty($donation_amount) && !empty($donation_cause)) {
-//                $donation_amount = floatval($donation_amount);
-//                $donation_cause = sanitize_text_field($donation_cause);
-//
-//                if ($donation_amount > 0) {
-//                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
-//                    WC()->cart->add_fee($fee_title, $donation_amount);
-//                }
-//            }
-//        }
+        function donation_widget_add_fee($cart) {
+            
+            $donation_amount = WC()->session->get( 'ybh_donation_amount', 0 );
+            $donation_cause = WC()->session->get( 'ybh_donation_cause', '' );
+            if ( empty($donation_amount) || (is_admin() && !is_ajax()) ) {
+                return;
+            }
+
+            if (!empty($donation_amount) && !empty($donation_cause)) {
+                $donation_amount = floatval($donation_amount);
+                $donation_cause = sanitize_text_field($donation_cause);
+
+                if ($donation_amount > 0) {
+                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
+                    WC()->cart->add_fee($fee_title, $donation_amount);
+                }
+            }
+        }
         // Handle AJAX request
         function donation_widget_update_fee() {
         //    echo 'donation_widget_update_fee';
@@ -403,5 +405,45 @@ class You_Be_Hero_Public {
             error_log('API Response: ' . wp_remote_retrieve_body($response));
         }
     }
+    
+    function woocommerce_register_store_api_endpoints($endpoints) {
+            $endpoints[] = [
+                'namespace' => 'wc/store',
+                'route' => '/youbehero',
+                'callback' => function($request) {
+                    try {
+                        // Validate request
+                        if (!wp_verify_nonce($request->get_header('X-WC-Store-API-Nonce'), 'wc_store_api')) {
+                            throw new Exception('Invalid nonce', 403);
+                        }
+                        
+                        // Process request
+                        $params = $request->get_params();
+                        
+                        // Your custom logic here
+                        $result = [
+                            'success' => true,
+                            'data' => [
+                                'custom_field' => 'custom_value',
+                                'params' => $params
+                            ]
+                        ];
+                        
+                        return new WP_REST_Response($result, 200);
+                    } catch (Exception $e) {
+                        return new WP_Error(
+                            'youbehero_error',
+                            $e->getMessage(),
+                            ['status' => $e->getCode() ?: 400]
+                        );
+                    }
+                },
+                'methods' => ['GET', 'POST'],
+                'permission_callback' => function() {
+                    return current_user_can('read'); // Adjust capability as needed
+                }
+            ];
+            return $endpoints;
+        }
 
 }
