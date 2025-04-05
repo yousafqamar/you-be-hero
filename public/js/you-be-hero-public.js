@@ -38,8 +38,8 @@
 
         $('.donation-item').before(`<div class="donation-box-container">
                 <div class="donation-header">
-                    <span>Θα θέλατε να κάνετε μια δωρεά;</span>
-                    <span class="donation-amount">0,00€</span>
+                    <span>Ta ???ate ?a ???ete �?a d??e?;</span>
+                    <span class="donation-amount">0,00�</span>
                 </div>
 
                 <!-- Custom Dropdown -->
@@ -49,7 +49,7 @@
                             <img src="https://via.placeholder.com/35" alt="Logo">
                             <span id="selectedOption">Save your hood</span>
                         </div>
-                        <span class="dropdown-arrow">▼</span>
+                        <span class="dropdown-arrow">?</span>
                     </div>
                     <div class="custom-dropdown-menu" id="dropdownMenu">
                         <!-- Add more options here if needed -->
@@ -58,10 +58,10 @@
 
                 <!-- Radio Buttons -->
                 <div class="donation-buttons">
-                    <button>0,5€</button>
-                    <button class="active">1€</button>
-                    <button>3€</button>
-                    <button class="delete-button">🗑</button>
+                    <button>0,5�</button>
+                    <button class="active">1�</button>
+                    <button>3�</button>
+                    <button class="delete-button">??</button>
                 </div>
                 <input name="donation_cause" id="donation-cause" type="hidden"/>
                 <input name="donation_amount" id="donation-amount" type="hidden"/>
