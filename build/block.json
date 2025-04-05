@@ -30,6 +30,10 @@
     "amounts": {
       "type": "array",
       "default": [
+        10,
+        20,
+        50,
+        100
       ]
     }
   },

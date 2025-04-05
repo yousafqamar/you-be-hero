@@ -147,7 +147,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 70%;
+    /*width: 70%;*/
 }
 
 .donation-header {
@@ -179,7 +179,7 @@
 }
 
 .donation-select img {
-    width: 35px;
+    /*width: 35px;*/
     height: 35px;
     border-radius: 50%;
 }
@@ -224,6 +224,11 @@
     border: none;
     cursor: pointer;
     font-size: 16px;
+}
+
+.custom-dropdown-option span {
+    margin-left: 1rem;
+    font-size: 1rem;
 }
 /*=========IQBAL=========*/
 

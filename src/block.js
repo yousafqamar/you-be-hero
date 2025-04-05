@@ -29,8 +29,15 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 		}, 1000 ),
 		[ setExtensionData ]
 	);
+        
+        const { causes, amounts } = ybh_donation_checkout_params;
 
-//	const validationErrorId = 'shipping-workshop-other-value';
+        // Populate causes and amounts
+        const $causeSelect = $('#donation-cause');
+        const $amountsContainer = $('#donation-amounts');
+        console.log( document.querySelector(".ybh-dd-option") );
+
+//	const validationErrorId = 'donatoin-widget-other-value';
 
 //	const { setValidationErrors, clearValidationError } = useDispatch(
 //		'wc/store/validation'
@@ -55,29 +62,29 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 //		 */
 //	} );
 	const [
-		selectedAlternateShippingInstruction,
-		setSelectedAlternateShippingInstruction,
+		selectedYbhDonationInstruction,
+		setSelectedYbhDonationInstruction,
 	] = useState( 'try-again' );
-	const [ otherShippingValue, setOtherShippingValue ] = useState( '' );
+	const [ otherDonationValue, setOtherDonationValue ] = useState( '' );
 
 	/* Handle changing the select's value */
 	useEffect( () => {
 		/**
 		 * [frontend-step-02]
 		 * 📝 Using `setExtensionData`, write some code in this useEffect that will run when the
-		 * `selectedAlternateShippingInstruction` value changes.
+		 * `selectedYbhDonationInstruction` value changes.
 		 *
 		 * The API of this function is: setExtensionData( namespace, key, value )
 		 *
-		 * This code should use `setExtensionData` to update the `alternateShippingInstruction` key
-		 * in the `shipping-workshop` namespace of the checkout data store.
+		 * This code should use `setExtensionData` to update the `ybhDonationInstruction` key
+		 * in the `donatoin-widget` namespace of the checkout data store.
 		 */
 		/**
 		 * [frontend-step-02-extra-credit-1]
 		 * 💰 Extra credit: Ensure the `setExtensionData` function is not called multiple times. We
 		 * can use the `debouncedSetExtensionData` function for this. The API is the same.
 		 */
-	}, [ setExtensionData, selectedAlternateShippingInstruction ] );
+	}, [ setExtensionData, selectedYbhDonationInstruction ] );
 
 	/**
 	 * [frontend-step-02-extra-credit-2]
@@ -90,9 +97,9 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 	useEffect( () => {
 		/**
 		 * [frontend-step-03]
-		 * 📝 Write some code in this useEffect that will run when the `otherShippingValue` value
-		 * changes. This code should use `setExtensionData` to update the `otherShippingValue` key
-		 * in the `shipping-workshop` namespace of the checkout data store.
+		 * 📝 Write some code in this useEffect that will run when the `otherDonationValue` value
+		 * changes. This code should use `setExtensionData` to update the `otherDonationValue` key
+		 * in the `donatoin-widget` namespace of the checkout data store.
 		 */
 		/**
 		 * [frontend-step-03-extra-credit]
@@ -102,7 +109,7 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 		/**
 		 * [frontend-step-04]
 		 * 📝 Write some code that will use `setValidationErrors` to add an entry to the validation
-		 * data store if `otherShippingValue` is empty.
+		 * data store if `otherDonationValue` is empty.
 		 *
 		 * The API of this function is: `setValidationErrors( errors )`.
 		 *
@@ -117,7 +124,7 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 		 * For now, the error should remain hidden until the user has interacted with the field.
 		 *
 		 * [frontend-step-04-extra-credit]
-		 * 💰 Extra credit: If the `selectedAlternateShippingInstruction` is not `other` let's skip
+		 * 💰 Extra credit: If the `selectedYbhDonationInstruction` is not `other` let's skip
 		 * adding the validation error. Make sure to place this code before the
 		 * `setValidationErrors` call, thus, the spoiler of [frontend-step-04] comes after the one
 		 * of [frontend-step-04-extra-credit].
@@ -125,8 +132,8 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 		/**
 		 * [frontend-step-05]
 		 * 📝 Update the above code so that it will use `clearValidationError` to remove the
-		 * validation error from the data store if `selectedAlternateShippingInstruction` is not
-		 * `other`, or if the `otherShippingValue` is not empty.
+		 * validation error from the data store if `selectedYbhDonationInstruction` is not
+		 * `other`, or if the `otherDonationValue` is not empty.
 		 *
 		 * The API of `clearValidationError` is: `clearValidationError( validationErrorId )`
 		 *
@@ -139,41 +146,41 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 		 * 💡 Don't forget to update the dependencies of the `useEffect` when you reference new
 		 * functions/variables!
 		 */
-		otherShippingValue,
+		otherDonationValue,
 		setExtensionData,
 	] );
 
 	return (
-		<div className="wp-block-shipping-workshop-not-at-home">
+		<div className="wp-block-ybh-ybhDonation-widget">
 			{ /**
 			 * [frontend-step-01]
 			 * 📝 Go to options.js and add some new options to display in the SelectControl below.
 			 */ }
 			<SelectControl
 				label={ __(
-					'If I am not at home please…',
-					'shipping-workshop'
+					'would you like to donate?',
+					'donatoin-widget'
 				) }
-				value={ selectedAlternateShippingInstruction }
+				value={ selectedYbhDonationInstruction }
 				options={ options }
-				onChange={ setSelectedAlternateShippingInstruction }
+				onChange={ setSelectedYbhDonationInstruction }
 			/>
 
-			{ selectedAlternateShippingInstruction === 'other' && (
+			{ selectedYbhDonationInstruction === 'other' && (
 				<>
 					<TextareaControl
 						className={
-							'shipping-workshop-other-textarea' +
+							'donatoin-widget-other-textarea' +
 							( validationError?.hidden === false
 								? ' has-error'
 								: '' )
 						}
-						onChange={ setOtherShippingValue }
-						value={ otherShippingValue }
+						onChange={ setOtherDonationValue }
+						value={ otherDonationValue }
 						required={ true }
 						placeholder={ __(
-							'Enter shipping instructions',
-							'shipping-workshop'
+							'Enter donatoin instructions',
+							'donatoin-widget'
 						) }
 					/>
 					{ /**

@@ -164,10 +164,12 @@ class You_Be_Hero_Public {
             if (is_checkout()) {
                 // Fetch data from the API
                 $data = $this->donation_widget_fetch_data();
-
+                
                 wp_enqueue_style('donation-widget-style', YBH_PLUGIN_URL.'assets/css/style.css');
                 wp_enqueue_script('donation-widget-script', YBH_PLUGIN_URL.'assets/js/script.js', array('jquery'), null, true);
+                
                 if ($data) {
+                    
                     // Extract causes and amounts
                     $causes = array_map(function ($cause) {
                         return [
@@ -185,9 +187,11 @@ class You_Be_Hero_Public {
                         'causes'   => $causes,
                         'amounts'  => $amounts,
                     ));
+                    
                 }
             }
         }
+        
         // Add donation fee to cart
         function donation_widget_add_fee($cart) {
             
@@ -207,6 +211,7 @@ class You_Be_Hero_Public {
                 }
             }
         }
+        
         // Handle AJAX request
         function donation_widget_update_fee() {
         //    echo 'donation_widget_update_fee';
@@ -228,7 +233,15 @@ class You_Be_Hero_Public {
             }
             wp_die();
         }
-        function donation_widget_fetch_data() {
+        
+        function donation_widget_fetch_data( $force_fetch = false ) {
+            if( !$force_fetch ){
+                $youbehero = get_option('ybh_donation_checkout_params');
+                if( $youbehero ){
+                    return $youbehero;
+                }
+            }
+            
             $response = wp_remote_get('https://yousafqamar.com/youbehero.json'); // Replace with the actual API endpoint
             if (is_wp_error($response)) {
                 return false;
@@ -240,7 +253,7 @@ class You_Be_Hero_Public {
             if (json_last_error() !== JSON_ERROR_NONE || !isset($data['data'])) {
                 return false;
             }
-
+            update_option( 'ybh_donation_checkout_params', $data['data'] );
             return $data['data'];
         }
 
