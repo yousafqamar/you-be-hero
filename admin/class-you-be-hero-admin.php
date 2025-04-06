@@ -51,7 +51,26 @@ class You_Be_Hero_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-	}
+        }
+
+        function display_custom_fee_image_based_on_meta( $value, $item) {
+            
+//            if( $value == 'Donation to Ένα παιδί μετράει τα άστρα (Look to the Stars)' ){
+//////                echo '<pre>';
+//////                var_dump($item->get_meta_data());
+//////                var_dump('_donation_org_img');
+////                var_dump($item->get_meta('_donation_org_img'));
+//////                echo '</pre>';
+//            }
+            $donation_org_img = $item->get_meta('_donation_org_img');
+
+            if ( $donation_org_img ) {
+
+                // Output the image
+                $value = '<img src="' . esc_url( $donation_org_img ) . '" alt="'.$value.'" style="max-width:100px;" class="attachment-thumbnail size-thumbnail"/>'.$value;
+            }
+            return $value;
+        }
         
         function ybh_enqueue_checkout_block_editor_assets() {
             wp_enqueue_script(
@@ -86,7 +105,9 @@ class You_Be_Hero_Admin {
 
             foreach ($order->get_fees() as $fee) {
                 $fee_total = (float) $fee->get_total(); // Ensure proper numeric type
-
+//                echo '<pre>';
+//                var_dump( $fee->get_meta('_ybh_donation_amount') );
+//                echo '</pre>';
                 if (stripos($fee->get_name(), 'donation') !== false) {
                     $donation_total += $fee_total;
                 } else {
@@ -111,6 +132,27 @@ class You_Be_Hero_Admin {
             }
         }
         
+//            function woocommerce_order_item_meta_start($item_id, $item, $order) {
+//                var_dump('$item_id');
+//                var_dump($item_id);
+//                if ($item->get_meta('Donation Organization ID')) {
+//                    echo '<div class="donation-info">';
+//                    echo 'Donation to: <strong>' . esc_html($item->get_meta('Donation Organization')) . '</strong>';
+//                    echo ' (ID: ' . esc_html($item->get_meta('_donation_org_id')) . ')';
+//                    echo '</div>';
+//                }
+//            }
+            
+//        function woocommerce_add_cart_item_data($cart_item_data, $product_id) {
+//            if (isset($_POST['donation_org_id'])) {
+//                $cart_item_data['donation_meta'] = [
+//                    'org_id' => sanitize_text_field($_POST['donation_org_id']),
+//                    'org_name' => sanitize_text_field($_POST['donation_org_name'])
+//                ];
+//            }
+//            return $cart_item_data;
+//        }
+            
 	/**
 	 * Register the stylesheets for the admin area.
 	 *

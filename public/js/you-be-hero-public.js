@@ -36,91 +36,66 @@
         const $causeSelect = $('#donation-cause');
         const $amountsContainer = $('#donation-amounts');
 
-//        $('.donation-item').before(`<div class="donation-box-container">
-//                <div class="donation-header">
-//                    <span>Θα θέλατε να κάνετε μια δωρεά;</span>
-//                    <span class="donation-amount">0,00€</span>
-//                </div>
-//
-//                <!-- Custom Dropdown -->
-//                <div class="custom-dropdown">
-//                    <div class="donation-select custom-dropdown-toggle" id="customDropdownToggle">
-//                        <div class="donation-text">
-//                            <img src="https://via.placeholder.com/35" alt="Logo">
-//                            <span id="selectedOption">Save your hood</span>
-//                        </div>
-//                        <span class="dropdown-arrow">▼</span>
-//                    </div>
-//                    <div class="custom-dropdown-menu" id="dropdownMenu">
-//                        <!-- Add more options here if needed -->
-//                    </div>
-//                </div>
-//
-//                <!-- Radio Buttons -->
-//                <div class="donation-buttons donation-amounts">
-//                    <button class="radio-button">0,5€</button>
-//                    <button class="active">1€</button>
-//                    <button>3€</button>
-//                    <button class="delete-button">🗑</button>
-//                </div>
-//             </div>`)
-
-
-//        $('#dropdownMenu').html("");
-//        causes.forEach((cause) => {
-//            $('#dropdownMenu').append(`<div class="custom-dropdown-option" id="customDropdownOption" data-text="${cause.label}" data-value="${cause.value}")">
-//                      <img alt="${cause.label}" src="${cause.image}"/>
-//                      <span class="text-gray-700">${cause.label}</span>
-//                    </div>`);
-//        });
-
-        // $causeSelect.html("");
-        // causes.forEach((cause) => {
-        //     $causeSelect.append(`<option value="${cause.value}">${cause.label}</option>`);
-        // });
-
-//         amounts.forEach((amount) => {
-//             amount = parseInt(amount)
-//             $amountsContainer.prepend(`
-//                 <label class="radio-button">
-//                     <input type="radio" name="donation_amount" value="${amount}" class="visually-hidden"> $${amount}
-//                 </label>
-//             `);
-//         });
-        
-        
-        
-        const addDonationFee = async (orgId, orgName, amount) => {
+        const addDonationFee = async (orgId, orgName, amount, orgImg) => {
             try {
-                const currentCart = wp.data.select('wc/store/cart').getCartData();
+                // 1. Get current cart state
+                const { getCartData } = wp.data.select('wc/store/cart');
+                const currentCart = getCartData();
 
-            console.log( orgId, orgName, amount )
-                await wp.data.dispatch('wc/store/cart').setCartData({
-                    fees: [
-                        ...(currentCart.fees || []),
-                        {
-                            name: `Donation for ${orgName}`,
-                            totals: {
-                                currency_code: 'USD',
-                                currency_minor_unit: 2,
-                                total: Math.round(amount * 100).toString(),
-                                total_tax: '0'
-                            },
-                            meta_data: [
-                                { key: '_donation_org_id', value: orgId },
-                                { key: '_donation_org_name', value: orgName }
-                            ]
-                        }
-                    ]
+                    console.log( orgId, orgName, amount )
+                    await wp.data.dispatch('wc/store/cart').setCartData({
+                        fees: [
+                            ...(currentCart.fees || []),
+                            {
+                                name: `Donation for ${orgName}`,
+                                totals: {
+                                    currency_code: 'USD',
+                                    currency_minor_unit: 2,
+                                    total: Math.round(amount).toString(),
+                                    total_tax: '0'
+                                },
+                                meta_data: [
+                                    { key: '_donation_org_id', value: orgId },
+                                    { key: '_donation_org_name', value: orgName }
+                                ]
+                            }
+                        ]
+                    });
+                //server side update
+                $.ajax({
+                    type: 'POST',
+                    url: ybh_donation_checkout_params.ajax_url,
+                    data: {
+                        action: 'update_donation_fee',
+                        org_id: orgId,
+                        amount: amount/100,
+                        org_name: orgName,
+                        org_img: orgImg,
+                        meta_data: [
+                            { key: '_donation_org_id', value: orgId },
+                            { key: '_donation_org_name', value: orgName },
+                            { key: '_donation_org_img', value: orgImg }
+                        ]
+                    },
+                    success: function(response) {
+                        $('body').trigger('update_checkout');
+                    }
                 });
-
+                console.log('Donation added successfully!');
+                return true;
 
             } catch (error) {
                 console.error('Donation error:', error);
+                //show elegant notice update this
+                wp.data.dispatch('core/notices').createNotice(
+                    'error', 
+                    `Failed to add donation: ${error.message}`,
+                    { id: 'donation-error' }
+                );
+                throw error;
             }
         };
 
-        
         function add_donation_to_cart(){
             console.log( 'add_donation_to_cart' )
             const orgId = $('#donation-cause').val();
@@ -128,8 +103,9 @@
             
             const selectedCause = causes.find(cause =>cause.value === parseInt(orgId));
             const orgName = selectedCause ? selectedCause.label : '';
+            const orgImg = selectedCause ? selectedCause.image : '';
             const numericAmount = parseFloat(amount);
-            addDonationFee( orgId, orgName, numericAmount );
+            addDonationFee( orgId, orgName, numericAmount, orgImg );
         }
         
         function validate_donation_data(){
@@ -138,11 +114,11 @@
             const donation_amount = $('#donation-amount').val();
 //            console.log(donation_amount);
             if( !donation_amount ){
-                alert('Please select amount to donate');
+                console.log('Please select amount to donate');
                 return false;
             }
             if( !donation_cause ){
-                alert('Please select cause to donate');
+                console.log('Please select cause to donate');
                 return false;
             }
             return true;

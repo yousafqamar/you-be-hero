@@ -17,7 +17,7 @@
     // Extend WooCommerce Checkout Block settings
     var withYBHCheckoutDonationSettings = createHigherOrderComponent(function (BlockEdit) {
         return function (props) {
-            console.log('props:', props);
+//            console.log('props:', props);
             if (props.name !== 'woocommerce/checkout') {
                 return el(BlockEdit, props);
             }

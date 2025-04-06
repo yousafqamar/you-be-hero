@@ -17,7 +17,7 @@ $amounts = array_values($youbehero_data['donation_settings']['fixed_amounts']);
 function render_donation_buttons($amounts) {
     
     foreach ($amounts as $amount) {
-        $amount_cents = $amount * 100; // Convert to cents for Stripe
+        $amount_cents = (int)$amount * 100;
         ?>
         <button class="radio-button" data-value="<?php echo $amount_cents; ?>" data-label="<?php echo $amount; ?>" ><?php echo $amount; ?></button>
         <?php

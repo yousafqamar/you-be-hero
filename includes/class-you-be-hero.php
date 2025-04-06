@@ -74,11 +74,6 @@ class You_Be_Hero {
 		}
 		$this->plugin_name = 'you-be-hero';
                 
-                // Try WooCommerce Blocks API first (modern approach)
-                add_action('woocommerce_blocks_loaded', [$this, 'register_blocks_endpoint'], 20);
-
-                // Fallback for cases where Blocks API isn't available
-                add_action('rest_api_init', [$this, 'register_fallback_endpoint'], 20);
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
@@ -185,6 +180,11 @@ class You_Be_Hero {
                 // Handle AJAX request to fetch API token
                 $this->loader->add_action( 'wp_ajax_ybh_get_token', $plugin_admin,'ybh_get_token' );
 
+            // Display in admin
+            $this->loader->add_filter( 'woocommerce_order_item_get_name', $plugin_admin, 'display_custom_fee_image_based_on_meta', 10, 2 );
+//            add_action('woocommerce_order_item_meta_start', $plugin_admin,'woocommerce_order_item_meta_start', 10, 3);
+//            add_filter('woocommerce_add_cart_item_data', $plugin_admin, 'woocommerce_add_cart_item_data', 10, 2);
+
         }
 
 	/**
@@ -203,8 +203,9 @@ class You_Be_Hero {
 		$this->loader->add_action( 'woocommerce_cart_calculate_fees', $plugin_public, 'donation_widget_add_fee' );
 		$this->loader->add_action( 'wp_ajax_update_donation_fee', $plugin_public, 'donation_widget_update_fee' );
 		$this->loader->add_action( 'wp_ajax_nopriv_update_donation_fee', $plugin_public, 'donation_widget_update_fee' );
-		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'woocommerce_checkout_update_order_meta_fun', 10, 2 );
-		$this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'save_custom_data_from_session', 10, 2 );
+                $this->loader->add_action('woocommerce_checkout_create_order_fee_item', $plugin_public,'woocommerce_checkout_create_order_fee_item', 10, 4);
+//        $this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'woocommerce_checkout_update_order_meta_fun', 10, 2 );
+                $this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'save_custom_data_from_session', 10, 2 );
 //		$this->loader->add_action( 'woocommerce_get_order_item_totals', $plugin_public, 'woocommerce_get_order_item_totals_fun', 10, 2 );
 
 		$this->loader->add_action( 'init', $plugin_public, 'donation_widget_register_block' );
@@ -214,20 +215,36 @@ class You_Be_Hero {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'donation_widget_enqueue_scripts' );
 
-        $this->loader->add_action( 'woocommerce_order_status_completed', $plugin_public, 'ybh_send_api_on_order_complete', 10, 1 );
+                $this->loader->add_action( 'woocommerce_order_status_completed', $plugin_public, 'ybh_send_api_on_order_complete', 10, 1 );
+            
+                // Try WooCommerce Blocks API first (modern approach)
+//            $this->loader->add_action('woocommerce_blocks_loaded', $this, 'register_blocks_endpoint', 20);
 
 	}
-
-    /**
-         * Preferred: Register with WooCommerce Blocks Store API
-         */
+        
+        /*not applied due to dependency on woo block plugin, not all of the stores might have this addon*/
         public function register_blocks_endpoint() {
-            if (!class_exists('WooCommerce\Blocks\StoreApi\SchemasController')) {
-                return; // Exit if Blocks API isn't available
+                $store_api_available = class_exists('WooCommerce\Blocks\Package') && 
+                          class_exists('WooCommerce\Blocks\StoreApi\SchemasController') &&
+                          class_exists('WooCommerce\Blocks\StoreApi\RoutesController');
+    
+            if (!$store_api_available) {
+                error_log('YouBeHero: WooCommerce Store API classes not found');
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    add_action('admin_notices', function() {
+                        echo '<div class="notice notice-error"><p>YouBeHero: WooCommerce Store API not available. Make sure WooCommerce Blocks is active.</p></div>';
+                    });
+                }
+                return;
+            }
+            if (!function_exists('woocommerce_store_api_register_endpoint_data')) {
+                error_log('YouBeHero: WooCommerce Store API not available');
+                return;
             }
 
-            require_once __DIR__ . '/class-youbehero-endpoint.php';
+           require_once __DIR__ . '/class-youbehero-endpoint.php';
 
+            // Register schema and route
             WooCommerce\Blocks\StoreApi\SchemasController::register(
                 'youbehero', 
                 'YouBeHero_Endpoint_Schema'
@@ -236,35 +253,14 @@ class You_Be_Hero {
                 'youbehero',
                 'YouBeHero_Endpoint_Route'
             );
-        }
 
-        /**
-         * Fallback: Register as standard REST API endpoint
-         */
-        public function register_fallback_endpoint() {
-            // Only register fallback if Blocks API didn't work
-            if (class_exists('WooCommerce\Blocks\StoreApi\SchemasController')) {
-                die('ere');
-                return;
-            }
-
-            register_rest_route('wc/store', '/youbehero', [
-                'methods'  => WP_REST_Server::READABLE,
-                'callback' => [$this, 'handle_fallback_request'],
-                'permission_callback' => '__return_true',
+            // Alternative registration method
+            woocommerce_store_api_register_endpoint_data([
+                'endpoint' => 'youbehero',
+                'namespace' => 'wc/store',
             ]);
         }
 
-        /**
-         * Handle fallback endpoint requests
-         */
-        public function handle_fallback_request(WP_REST_Request $request) {
-            return [
-                'success'    => true,
-                'message'    => 'You be hero! (Fallback Endpoint)',
-                'timestamp' => current_time('mysql'),
-            ];
-        }
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
