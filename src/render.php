@@ -14,15 +14,6 @@ $causes = array_map(function ($cause) {
 
 $amounts = array_values($youbehero_data['donation_settings']['fixed_amounts']);
 
-function render_donation_buttons($amounts) {
-    
-    foreach ($amounts as $amount) {
-        $amount_cents = (int)$amount * 100;
-        ?>
-        <button class="radio-button" data-value="<?php echo $amount_cents; ?>" data-label="<?php echo $amount; ?>" ><?php echo $amount; ?></button>
-        <?php
-    }
-}
 ?>
 
     <div class="donation-checkout-widget youbehero-donation-widget">
@@ -57,7 +48,14 @@ function render_donation_buttons($amounts) {
                     </div>
 
                     <div class="donation-buttons donation-amounts">
-                        <?php render_donation_buttons($amounts);?>
+                        <?php //render_donation_buttons($amounts);
+                        foreach ($amounts as $amount) {
+                            $amount_cents = (int)$amount * 100;
+                            ?>
+                            <button class="radio-button" data-value="<?php echo $amount_cents; ?>" data-label="<?php echo $amount; ?>" ><?php echo $amount; ?></button>
+                            <?php
+                        }
+                        ?>
                         <button class="delete-button">🗑</button>
                     </div>
                     <input name="donation_cause" id="donation-cause" type="hidden"/>

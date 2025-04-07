@@ -212,7 +212,7 @@ class You_Be_Hero_Public {
                 $donation_cause = sanitize_text_field($donation_cause);
 
                 if ($donation_amount > 0) {
-                    $fee_title = __('Donation to ', 'you-be-hero') . $donation_cause;
+                    $fee_title = __('Donation for ', 'you-be-hero') . $donation_cause;
                     $fee_id = $cart->add_fee($fee_title, $donation_amount);
                         $last_fee_index = count( $cart->fees ) - 1;
                         if ( isset( $cart->fees[ $last_fee_index ] ) && $cart->fees[ $last_fee_index ]->id === $fee_id ) {
@@ -288,6 +288,7 @@ class You_Be_Hero_Public {
         function donation_widget_fetch_data( $force_fetch = false ) {
             if( !$force_fetch ){
                 $youbehero = get_option('ybh_donation_checkout_params');
+
                 if( $youbehero ){
                     return $youbehero;
                 }
