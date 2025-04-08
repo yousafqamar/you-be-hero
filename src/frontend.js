@@ -21,7 +21,7 @@ const fetchYouBeHeroData = async () => {
         const response = await dispatch('wc/store/api').get('wc/store/youbehero', {
             param: 'optional_value' // Add parameters if needed
         });
-        
+
         console.log('YouBeHero Response:', response);
         return response;
     } catch (error) {
@@ -33,11 +33,11 @@ const fetchYouBeHeroData = async () => {
 // Example usage in a component
 const MyCheckoutComponent = () => {
     const [heroData, setHeroData] = useState(null);
-    
+
     useEffect(() => {
         fetchYouBeHeroData().then(data => setHeroData(data));
     }, []);
-    
+
     return (
         <div>
             {heroData ? (
