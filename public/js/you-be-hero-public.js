@@ -199,7 +199,8 @@
         $(document).on('click', '#ybh-dd-select', function () {
             $('#dropdownMenu').toggleClass('show');
           });
-        $(document).on('click', '.ybh-dd-option', function () {
+        $(document).on('click', '.ybh-dd-option', function (event) {
+            event.preventDefault();
             const selectedOption = document.getElementById('selectedOption');
             const donationCauseEle = document.getElementById('donation-cause');
             const causeImgEle = document.getElementById('selected-cause-img');
@@ -226,7 +227,8 @@
             }
         };
 
-        $(document).on('click', '.radio-button', function () {
+        $(document).on('click', '.radio-button', function (event) {
+            event.preventDefault();
 
             const donation_amount = $(this).data('value');
             const donation_label = $(this).data('label');
