@@ -54,22 +54,24 @@ class You_Be_Hero_Admin {
         }
 
         function display_custom_fee_image_based_on_meta( $value, $item) {
-            
-//            if( $value == 'Donation to Ένα παιδί μετράει τα άστρα (Look to the Stars)' ){
-//////                echo '<pre>';
-//////                var_dump($item->get_meta_data());
-//////                var_dump('_donation_org_img');
-////                var_dump($item->get_meta('_donation_org_img'));
-//////                echo '</pre>';
+//            
+////            if( $value == 'Donation to Ένα παιδί μετράει τα άστρα (Look to the Stars)' ){
+//////////                echo '<pre>';
+//////////                var_dump($item->get_meta_data());
+//////////                var_dump('_donation_org_img');
+////                var_dump($item->get_type());
+//////////                echo '</pre>';
+////            }
+//            $donation_org_id = $item->get_meta('_donation_org_id');
+//            if( $donation_org_id  ){
+//                $donation_org_img = $item->get_meta('_donation_org_img');
+//
+//                $donation_org_img = ( $donation_org_img ) ?$donation_org_img:'https://cdn.theorg.com/96d670ba-f440-464f-ac91-e156c79bb653_thumb.jpg';
+//
+//                    // Output the image
+//                    $value = '<img src="' . esc_url( $donation_org_img ) . '" alt="'.$value.'" style="max-width:100px;" class="attachment-thumbnail size-thumbnail"/>'.$value;
 //            }
-            $donation_org_img = $item->get_meta('_donation_org_img');
-
-            if ( $donation_org_img ) {
-
-                // Output the image
-                $value = '<img src="' . esc_url( $donation_org_img ) . '" alt="'.$value.'" style="max-width:100px;" class="attachment-thumbnail size-thumbnail"/>'.$value;
-            }
-            return $value;
+//            return $value;
         }
         
         function ybh_enqueue_checkout_block_editor_assets() {
