@@ -205,13 +205,14 @@ class You_Be_Hero_Admin {
      * @return void
      */
     public function ybh_add_admin_menu() {
+        $icon_url = plugin_dir_url(__FILE__) . 'img/ybh-dark-icon.png';
         add_menu_page(
             'YouBeHero API Settings',  // Page title
             'YouBeHero',               // Menu title
             'manage_options',          // Capability
             'ybh-settings',            // Menu slug
             array( $this, 'ybh_settings_page' ),       // Function to display content
-            'dashicons-admin-network', // Icon
+            $icon_url, // Icon
             56                         // Position
         );
     }
