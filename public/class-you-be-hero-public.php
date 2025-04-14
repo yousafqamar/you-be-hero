@@ -380,6 +380,7 @@ class You_Be_Hero_Public {
 
         /*not applied yet*/
     public function display_checkout_donation() {
+        $this->youbehero_public_shortcodes();
         $checkout_page_id = get_option('woocommerce_checkout_page_id');
         if (!$checkout_page_id) return;
 

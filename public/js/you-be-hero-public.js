@@ -130,10 +130,11 @@
                         ]
                     },
                     success: function(response) {
+                        console.log('Donation added successfully!');
                         $('body').trigger('update_checkout');
                     }
                 });
-                console.log('Donation added successfully!');
+                console.log('Donation process ends!');
                 return true;
 
             } catch (error) {
@@ -205,6 +206,7 @@
             const donationCauseEle = document.getElementById('donation-cause');
             const causeImgEle = document.getElementById('selected-cause-img');
 
+            $('#dropdownMenu').removeClass('show');
             selectedOption.textContent = $(this).data("text");
             console.log('Selected Value:', $(this).data("value"));
             donationCauseEle.value = $(this).data("value");
@@ -226,7 +228,7 @@
                 });
             }
         };
-
+        $('.radio-button:checked').trigger('click');
         $(document).on('click', '.radio-button', function (event) {
             event.preventDefault();
 
