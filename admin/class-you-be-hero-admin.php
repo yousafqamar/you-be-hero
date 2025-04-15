@@ -205,7 +205,7 @@ class You_Be_Hero_Admin {
      * @return void
      */
     public function ybh_add_admin_menu() {
-        $icon_url = plugin_dir_url(__FILE__) . 'img/ybh-dark-icon.png';
+        $icon_url = plugin_dir_url(__FILE__) . 'img/ybh-dark-icon-20x20.png';
         add_menu_page(
             'YouBeHero API Settings',  // Page title
             'YouBeHero',               // Menu title
