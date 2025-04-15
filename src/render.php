@@ -39,7 +39,6 @@ $padding = $youbehero_data['widget_configurations']['checkout_page']['padding'] 
 
 
 $config = $youbehero_data['widget_configurations'];
-
 $style = $config['checkout_page']['checkout_page'];
 $classes = [];
 
@@ -127,7 +126,7 @@ if( $checkWActive ){
     <div class="donation-box" >
         <h3><?php _e('Would you like to make a Donation?', 'woocommerce'); ?></h3>
 
-        <div class="donation-box-container" class="<?php echo $classString; ?>" style="background-color: <?php echo $style['background_color']; ?>; color: <?php echo $style['text_color']; ?>;">
+        <div class="donation-box-container <?php echo $classString; ?>" style="background-color: <?php echo $style['background_color']; ?>; color: <?php echo $style['text_color']; ?>; border-color: <?php echo $style['border_color']; ?>;">
             <div class="donation-header">
                 <?php echo $headHtml; ?>
             </div>

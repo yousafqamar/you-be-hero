@@ -109,9 +109,6 @@
                     fees: updatedFees
                 });
 
-                await wp.data.dispatch('wc/store/cart').invalidateResolution('getCartData');
-
-
 
                 //server side update
                 $.ajax({
@@ -228,8 +225,9 @@
                 });
             }
         };
-        $('.radio-button:checked').trigger('click');
-        $(document).on('click', '.radio-button', function (event) {
+        
+        $('.donation-amounts .radio-button:checked').trigger('click');
+        $(document).on('click', '.donation-amounts .radio-button', function (event) {
             event.preventDefault();
 
             const donation_amount = $(this).data('value');
@@ -239,29 +237,25 @@
             donationAmountEle.value = donation_amount;
 //            selectRadioButton(donation_amount);
             $('.donation-amount-pill').text(donation_label);
-            $('.radio-button').removeClass('selected');
+            $('.donation-amounts .radio-button').removeClass('selected');
             $(this).addClass('selected');
-            $('.donation-amount').change();
+            $('.donation-amounts .donation-amount').change();
             if ( validate_donation_data() ) {
                 add_donation_to_cart( );
             }
         });
-        // JavaScript to handle radio button selection
-//        function selectRadioButton(value) {
-//             console.log('value:', value)
-//            const radioButtons = document.querySelectorAll('.radio-button');
-//            radioButtons.forEach(button => {
-//                button.classList.remove('selected');
-//            });
-//            event.target.classList.add('selected');
-//
-//            const donationAmountEle = document.getElementById('donation-amount');
-//            donationAmountEle.value = value;
-//            console.log('Selected Radio Value:', value); // Log the selected radio value
-////            const donationCauseEle = document.getElementById('donation-cause');
-////            let donation_cause = donationCauseEle.value;
-////            update_donation_to_cart( value, donation_cause );
-//        }
+        
+        $(document).on('click', '.donation-amounts .delete-button', function (event) {
+            event.preventDefault();
+
+            console.log($(this));
+            const donationAmountEle = document.getElementById('donation-amount');
+            donationAmountEle.value = '';
+            $('.donation-amount-pill').text('0,00');
+            $('.donation-amounts .radio-button').removeClass('selected');
+            $('.donation-amounts .donation-amount').change();
+            add_donation_to_cart( );
+        });
 
     });
 
