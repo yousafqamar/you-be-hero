@@ -52,9 +52,27 @@ class You_Be_Hero_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-//            add_action('init', function() {
-//                add_action( 'woocommerce_register_store_api_endpoints', [$this,'woocommerce_register_store_api_endpoints']);
-//            });
+            add_action('wp_head', function() {
+                
+                $youbehero_data = get_option('ybh_donation_checkout_params');
+                if( !empty($youbehero_data) ){
+                    $btn_color = $youbehero_data['widget_configurations']['checkout_page']['btn_color'] ?? "#3b82f6";
+                    ?>
+
+                <style>
+                    .donation-buttons button, .donation-buttons .radio-button {
+                        border-color: <?php echo $btn_color?>;
+                    }
+                    .donation-buttons button:not(.selected), .donation-buttons .radio-button:not(.selected) {
+                        color: <?php echo $btn_color?>;
+                    }
+                    .radio-button.selected {
+                        background-color: <?php echo $btn_color?>;
+                    }
+                </style>    
+                    <?php
+                }
+            });
             
         }
         
@@ -277,11 +295,11 @@ class You_Be_Hero_Public {
                 $item->add_meta_data('_donation_org_img', $donation_cause_img);
                 $item->add_meta_data('Donation Organization', $donation_org_name);
                 $item->add_meta_data('_donation_org_name', $donation_org_name);
-//                WC()->session->__unset('ybh_donation_amount');
-//                WC()->session->__unset('ybh_donation_cause');
-//                WC()->session->__unset('_donation_org_name');
-//                WC()->session->__unset('_donation_org_id');
-//                WC()->session->__unset('_donation_org_img');
+                WC()->session->__unset('ybh_donation_amount');
+                WC()->session->__unset('ybh_donation_cause');
+                WC()->session->__unset('_donation_org_name');
+                WC()->session->__unset('_donation_org_id');
+                WC()->session->__unset('_donation_org_img');
             }
         }
 

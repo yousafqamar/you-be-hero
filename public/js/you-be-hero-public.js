@@ -44,44 +44,6 @@
 
                     console.log( orgId, orgName, amount )
 
-                // const cartData = wp.data.select('wc/store/cart').getCartData();
-                // let donationFee = [];
-                // $.map(cartData.fees,function(elem, key){
-                //     if (elem.name.includes('Donation for')){
-                //         donationFee = elem
-                //         // wp.data.dispatch('wc/store/cart').setCartData({
-                //         //     fees: []
-                //         // });
-                //     }
-                // })
-                // // console.log(donationFee)
-                //
-                //     // await wp.data.dispatch('wc/store/cart').setCartData({
-                //     //     fees: [
-                //     //         ...(currentCart.fees || []),
-                //     //         donationFee
-                //     //     ]
-                //     // });
-                //     await wp.data.dispatch('wc/store/cart').setCartData({
-                //         fees: [
-                //             ...(currentCart.fees || []),
-                //             {
-                //                 name: `Donation for ${orgName}`,
-                //                 totals: {
-                //                     currency_code: 'USD',
-                //                     currency_minor_unit: 2,
-                //                     total: Math.round(amount).toString(),
-                //                     total_tax: '0'
-                //                 },
-                //                 meta_data: [
-                //                     { key: '_donation_org_id', value: orgId },
-                //                     { key: '_donation_org_name', value: orgName }
-                //                 ]
-                //             }
-                //         ]
-                //     });
-
-
                 let updatedFees = [];
 
                 if (Array.isArray(currentCart.fees)) {
@@ -272,8 +234,8 @@
             $('.donation-amounts .donation-amount').change();
             add_donation_to_cart( );
         });
-        
-
+        if( jQuery('.ybh-dd-option').length )
+            jQuery('.ybh-dd-option').eq(0).click();
         // Show the loader
         function showLoader() {
           const loader = document.getElementById('widget-loader');

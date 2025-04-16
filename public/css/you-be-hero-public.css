@@ -77,9 +77,10 @@
 .donation-buttons button, .donation-buttons .radio-button {
     flex: 1;
     padding: 8px;
-    border: 1px solid #007bff;
+    /*border: 1px solid #007bff;*/
+    border: 1px solid;
     background: white;
-    color: #007bff;
+    /*color: #007bff;*/
     font-weight: bold;
     cursor: pointer;
     border-radius: 5px;
@@ -235,7 +236,7 @@
 
 /* Style for selected radio button */
 .radio-button.selected {
-    background-color: #3b82f6;
+    /*background-color: #3b82f6;*/
     color: white;
 }
 
@@ -275,3 +276,28 @@
 .bigBorderRadius { border-radius: 16px; }
 
 .bordered { border: 1px solid; }
+
+
+/* Loader Container */
+.widget-loader {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #f0f0f0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* Loader Bar */
+.widget-loader-bar {
+  width: 0%;
+  height: 100%;
+  background-color: #3498db;
+  transition: width 0.4s ease;
+}
+
+/* Hidden State */
+.hidden {
+  display: none;
+}

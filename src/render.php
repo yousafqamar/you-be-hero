@@ -30,11 +30,10 @@ $checkWActive = $youbehero_data['widget_configurations']['checkout_page']['activ
 
 $background_color = $youbehero_data['widget_configurations']['checkout_page']['background_color'] ?? "#ffffff";
 $text_color = $youbehero_data['widget_configurations']['checkout_page']['text_color'] ?? "#000000";
-$btn_color = $youbehero_data['widget_configurations']['checkout_page']['btn_color'] ?? "#000000";
+$btn_color = $youbehero_data['widget_configurations']['checkout_page']['btn_color'] ?? "#3b82f6";
 $border = $youbehero_data['widget_configurations']['checkout_page']['border'] ?? true;
 $margin = $youbehero_data['widget_configurations']['checkout_page']['margin'] ?? "bigMargin";
 $padding = $youbehero_data['widget_configurations']['checkout_page']['padding'] ?? "midPadding";
-
 
 
 
@@ -54,6 +53,7 @@ if (!empty($style['border_radius'])) {
 if (!empty($style['border'])) {
     $classes[] = 'bordered'; // optional class for styling border if needed
 }
+
 
 $classString = implode(' ', $classes);
 
@@ -124,7 +124,7 @@ if( $checkWActive ){
 <div class="donation-checkout-widget youbehero-donation-widget">
 
     <div class="donation-box" >
-        <h3><?php _e('Would you like to make a Donation?', 'woocommerce'); ?></h3>
+        <h3><?php _e('Would you like to make a Donation?', YBH_TEXT_DOMAIN); ?></h3>
 
         <div class="donation-box-container <?php echo $classString; ?>" style="background-color: <?php echo $style['background_color']; ?>; color: <?php echo $style['text_color']; ?>; border-color: <?php echo $style['border_color']; ?>;">
             <div class="donation-header">
@@ -135,7 +135,7 @@ if( $checkWActive ){
                 <div class="donation-select  custom-dropdown-toggle" id="ybh-dd-select">
                     <div class="donation-text">
                         <img id="selected-cause-img" src="<?php echo YBH_PLUGIN_URL?>public/img/save-hood-img.png" alt="Logo">
-                        <span id="selectedOption">Save your hood</span>
+                        <span id="selectedOption"><?php echo __( 'Select a cause', YBH_TEXT_DOMAIN )?></span>
                     </div>
                     <span class="dropdown-arrow">▼</span>
                 </div>
@@ -156,13 +156,15 @@ if( $checkWActive ){
         </div>
 
     </div>
-    <div class="donation-item">
-    </div>
+    
     <div id="donation-amounts" class="donation-buttons">
-
+    </div>
+        
+    <div id="widget-loader" class="widget-loader hidden">
+      <div class="widget-loader-bar">
+        Updating...</div>
     </div>
 </div>
 </div>
-
 <?php 
 }
