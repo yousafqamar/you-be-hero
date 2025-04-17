@@ -312,7 +312,7 @@ class You_Be_Hero_Public {
                 }
             }
             
-            $response = wp_remote_get('https://yousafqamar.com/youbehero.json'); // Replace with the actual API endpoint
+            $response = wp_remote_get('https://yousafqamar.com/ybh/youbehero.json'); // Replace with the actual API endpoint
             if (is_wp_error($response)) {
                 return false;
             }
