@@ -234,8 +234,14 @@
             $('.donation-amounts .donation-amount').change();
             add_donation_to_cart( );
         });
-        if( jQuery('.ybh-dd-option').length )
-            jQuery('.ybh-dd-option').eq(0).click();
+        const observer = new MutationObserver((mutations) => {
+            if (jQuery('.ybh-dd-option').length) {
+                jQuery('.ybh-dd-option').eq(0).click();
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
         // Show the loader
         function showLoader() {
           const loader = document.getElementById('widget-loader');
