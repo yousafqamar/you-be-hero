@@ -52,27 +52,27 @@ class You_Be_Hero_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-            add_action('wp_head', function() {
-                
-                $youbehero_data = get_option('ybh_donation_checkout_params');
-                if( !empty($youbehero_data) ){
-                    $btn_color = $youbehero_data['widget_configurations']['checkout_page']['btn_color'] ?? "#3b82f6";
-                    ?>
+                add_action('wp_head', function() {
 
-                <style>
-                    .donation-buttons button, .donation-buttons .radio-button {
-                        border-color: <?php echo $btn_color?>;
+                    $youbehero_data = get_option('ybh_donation_checkout_params');
+                    if( !empty($youbehero_data) ){
+                        $btn_color = $youbehero_data['widget_configurations']['checkout_page']['btn_color'] ?? "#3b82f6";
+                        ?>
+
+                    <style>
+                        .donation-buttons button, .donation-buttons .radio-button {
+                            border-color: <?php echo $btn_color?>;
+                        }
+                        .donation-buttons button:not(.selected), .donation-buttons .radio-button:not(.selected) {
+                            color: <?php echo $btn_color?>;
+                        }
+                        .radio-button.selected {
+                            background-color: <?php echo $btn_color?>;
+                        }
+                    </style>    
+                        <?php
                     }
-                    .donation-buttons button:not(.selected), .donation-buttons .radio-button:not(.selected) {
-                        color: <?php echo $btn_color?>;
-                    }
-                    .radio-button.selected {
-                        background-color: <?php echo $btn_color?>;
-                    }
-                </style>    
-                    <?php
-                }
-            });
+                });
             
         }
         
@@ -305,9 +305,9 @@ class You_Be_Hero_Public {
 
         function donation_widget_fetch_data( $force_fetch = false ) {
             if( !$force_fetch ){
-                $youbehero = get_option('ybh_donation_checkout_params');
+                $youbehero = get_option('ybh_donation_checkout_params', []);
 
-                if( $youbehero ){
+                if( $youbehero && !empty($youbehero) ){
                     return $youbehero;
                 }
             }

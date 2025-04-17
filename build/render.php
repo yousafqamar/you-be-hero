@@ -1,19 +1,26 @@
 <?php
 $currency_symbol = get_woocommerce_currency_symbol();
-$youbehero_data = get_option('ybh_donation_checkout_params');
-//$causes = $attributes['causes'];
-//$amounts = $attributes['amounts'];
+$youbehero_data = get_option('ybh_donation_checkout_params', []);
+$causes = [];
+$amounts = [];
 
-$causes = array_map(function ($cause) {
-    return [
-        'label' => $cause['name'],
-        'value' => $cause['id'],
-        'image' => $cause['image']
-    ];
-}, $youbehero_data['selected_causes']);
+if( !empty($youbehero_data) && !empty($youbehero_data[selected_causes]) ){
+    
+    if( !empty($youbehero_data['selected_causes']) ){
+        $causes = array_map(function ($cause) {
+            return [
+                'label' => $cause['name'],
+                'value' => $cause['id'],
+                'image' => $cause['image']
+            ];
+        }, $youbehero_data['selected_causes']);
 
-$amounts = array_values($youbehero_data['donation_settings']['fixed_amounts']);
-
+    }
+    if( !empty($youbehero_data['donation_settings']) && !empty($youbehero_data['fixed_amounts']) ){
+        
+        $amounts = array_values($youbehero_data['donation_settings']['fixed_amounts']);
+    }
+}
 
 
 /**
@@ -59,7 +66,7 @@ $classString = implode(' ', $classes);
 
 if( $checkWActive ){
     $html = $headHtml = '';
-    if ($donor == 'customer' &&  $donationType == 'fixed') {
+    if ( $donor == 'customer' &&  $donationType == 'fixed' && !empty($amounts) ) {
 
             $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">0,00'.$currency_symbol.'</span>';
 
