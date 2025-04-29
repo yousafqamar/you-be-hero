@@ -214,72 +214,99 @@ class You_Be_Hero_Public {
         
         // Add donation fee to cart
         function donation_widget_add_fee($cart) {
-            
-            $donation_amount = WC()->session->get( 'ybh_donation_amount', 0 );
-            $donation_cause = WC()->session->get( 'ybh_donation_cause', '' );
-            $donation_cause = WC()->session->get( '_donation_org_name', '' );
-            $donation_cause_id = WC()->session->get( '_donation_org_id', 0 );
-            $donation_cause_img = WC()->session->get( '_donation_org_img', '' );
-            
-            if ( empty($donation_amount) || (is_admin() && !is_ajax()) ) {
+            $donation_amount = WC()->session->get('ybh_donation_amount', 0);
+            $donation_cause = WC()->session->get('ybh_donation_cause', '');
+            $donation_cause = WC()->session->get('_donation_org_name', '');
+            $donation_cause_id = WC()->session->get('_donation_org_id', 0);
+            $donation_cause_img = WC()->session->get('_donation_org_img', '');
+
+            // Don't proceed in admin or if there's no donation amount
+            if (is_admin() && !is_ajax()) {
                 return;
             }
 
-            if (!empty($donation_amount) && !empty($donation_cause)) {
+            // If amount is empty or zero, remove the fee and clear session
+            if (empty($donation_amount) || floatval($donation_amount) <= 0) {
+                $this->donation_widget_remove_fee();
+                return;
+            }
+
+            // Add fee if we have amount and cause
+            if (!empty($donation_cause)) {
                 $donation_amount = floatval($donation_amount);
                 $donation_cause = sanitize_text_field($donation_cause);
 
-                if ($donation_amount > 0) {
-                    $fee_title = __('Donation for ', 'you-be-hero') . $donation_cause;
-                    $fee_id = $cart->add_fee($fee_title, $donation_amount);
-                        $last_fee_index = count( $cart->fees ) - 1;
-                        if ( isset( $cart->fees[ $last_fee_index ] ) && $cart->fees[ $last_fee_index ]->id === $fee_id ) {
-                            $cart->fees[ $last_fee_index ]->_ybh_donation_amount = $donation_amount;
-                            $cart->fees[ $last_fee_index ]->ybh_donation_cause = $donation_cause;
-                            $cart->fees[ $last_fee_index ]->_donation_org_name = $donation_cause;
-                            $cart->fees[ $last_fee_index ]->ybh_donation_cause_id = $donation_cause_id;
-                            $cart->fees[ $last_fee_index ]->ybh_donation_cause_img = $donation_cause_img;
-                        }
+                $fee_title = __('Donation for ', 'you-be-hero') . $donation_cause;
+                $fee_id = $cart->add_fee($fee_title, $donation_amount);
+
+                $last_fee_index = count($cart->fees) - 1;
+                if (isset($cart->fees[$last_fee_index]) && $cart->fees[$last_fee_index]->id === $fee_id) {
+                    $cart->fees[$last_fee_index]->_ybh_donation_amount = $donation_amount;
+                    $cart->fees[$last_fee_index]->ybh_donation_cause = $donation_cause;
+                    $cart->fees[$last_fee_index]->_donation_org_name = $donation_cause;
+                    $cart->fees[$last_fee_index]->ybh_donation_cause_id = $donation_cause_id;
+                    $cart->fees[$last_fee_index]->ybh_donation_cause_img = $donation_cause_img;
                 }
             }
         }
         
         // Handle AJAX request
         function donation_widget_update_fee() {
-            
-                $org_id = absint($_POST['org_id']);
-                $org_name = sanitize_text_field($_POST['org_name']);
-                $amount = floatval($_POST['amount']);
-                $org_img = floatval($_POST['org_img']);
-                if ( empty($amount) || empty($org_name) || empty($org_id) ) {
-                    wp_send_json_error( [ 'message' => 'Amount or donation cause is not valid.' ] );
-                }
-                // Initialize cart if not exists
-                if (!WC()->cart) {
-                    wc_load_cart();
-                }
+            $org_id = absint($_POST['org_id']);
+            $org_name = sanitize_text_field($_POST['org_name']);
+            $amount = floatval($_POST['amount']);
+            $org_img = sanitize_text_field($_POST['org_img']); // Changed from floatval to sanitize_text_field for image
 
-                // Add fee (WooCommerce native method)
-                WC()->cart->add_fee(
-                    "Donation for {$org_name}",
-                    $amount,
-                    false, // Not taxable
-                );
-//
-//                    [
-//                        '_donation_org_id' => $org_id,
-//                        '_donation_org_name' => $org_name
-//                    ]
-                    
-                WC()->session->set( 'ybh_donation_amount', $amount );
-                WC()->session->set( 'ybh_donation_cause', $org_name );
-                WC()->session->set( '_donation_org_name', $org_name );
-                WC()->session->set( '_donation_org_id', $org_id );
-                WC()->session->set( '_donation_org_img', $org_img );
+            // Initialize cart if not exists
+            if (!WC()->cart) {
+                wc_load_cart();
+            }
+
+            // If amount is empty or zero, remove the fee
+            if (empty($amount) || $amount <= 0) {
+                $this->donation_widget_remove_fee();
                 wp_send_json_success([
                     'fees' => WC()->cart->get_fees(),
-                    'total' => WC()->cart->get_total('edit')
+                    'total' => WC()->cart->get_total('edit'),
+                    'message' => 'Donation removed'
                 ]);
+                return;
+            }
+
+            // Validate required fields only if we're adding a fee
+            if (empty($org_name) || empty($org_id)) {
+                wp_send_json_error(['message' => 'Donation cause is not valid.']);
+                return;
+            }
+
+            // Set session data
+            WC()->session->set('ybh_donation_amount', $amount);
+            WC()->session->set('ybh_donation_cause', $org_name);
+            WC()->session->set('_donation_org_name', $org_name);
+            WC()->session->set('_donation_org_id', $org_id);
+            WC()->session->set('_donation_org_img', $org_img);
+
+            // Trigger cart update to add/update the fee
+            WC()->cart->calculate_totals();
+
+            wp_send_json_success([
+                'fees' => WC()->cart->get_fees(),
+                'total' => WC()->cart->get_total('edit'),
+                'message' => 'Donation updated'
+            ]);
+        }
+        
+        function donation_widget_remove_fee() {
+            WC()->session->set('ybh_donation_amount', 0);
+            WC()->session->set('ybh_donation_cause', '');
+            WC()->session->set('_donation_org_name', '');
+            WC()->session->set('_donation_org_id', 0);
+            WC()->session->set('_donation_org_img', '');
+
+            // Trigger cart update to remove any existing fees
+            if (WC()->cart) {
+                WC()->cart->calculate_totals();
+            }
         }
         // final
         function woocommerce_checkout_create_order_fee_item($item, $fee_key, $fee, $order) {

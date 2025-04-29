@@ -29,13 +29,17 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
     jQuery(document).ready(function($) {
+        if (!window.ybh_donation_checkout_params || typeof ybh_donation_checkout_params !== 'object') {
+            console.error('ybh_donation_checkout_params is not defined or not an object');
+            return;
+        }
 
-        const { causes, amounts } = ybh_donation_checkout_params;
+        const { causes, amounts } = ybh_donation_checkout_params || {};
 
         // Populate causes and amounts
         const $causeSelect = $('#donation-cause');
         const $amountsContainer = $('#donation-amounts');
-
+        let currencyCode = wcSettings?.currency?.code || 'USD';
         const addDonationFee = async (orgId, orgName, amount, orgImg) => {
             try {
                 // 1. Get current cart state
@@ -55,7 +59,7 @@
                 updatedFees.push({
                     name: `Donation for ${orgName}`,
                     totals: {
-                        currency_code: 'USD',
+                        currency_code: currencyCode,
                         currency_minor_unit: 2,
                         total: Math.round(amount).toString(),
                         total_tax: '0'
@@ -72,6 +76,7 @@
                 });
 
                 showLoader();
+                const amountF = isNaN(Number(amount)) ? 0 : Number(amount)/100;
                 //server side update
                 $.ajax({
                     type: 'POST',
@@ -79,7 +84,7 @@
                     data: {
                         action: 'update_donation_fee',
                         org_id: orgId,
-                        amount: amount/100,
+                        amount: amountF,
                         org_name: orgName,
                         org_img: orgImg,
                         meta_data: [
