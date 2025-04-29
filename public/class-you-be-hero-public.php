@@ -326,11 +326,11 @@ class You_Be_Hero_Public {
             $donation_cause_id = WC()->session->get( '_donation_org_id', 0 );
             $donation_cause_img = WC()->session->get( '_donation_org_img', '' );
             if (isset($donation_cause_id)) {
-                $item->add_meta_data('_ybh_donation_amount', $donation_amount);
-                $item->add_meta_data('_donation_org_id', $donation_cause_id);
-                $item->add_meta_data('_donation_org_img', $donation_cause_img);
-                $item->add_meta_data('Donation Organization', $donation_org_name);
-                $item->add_meta_data('_donation_org_name', $donation_org_name);
+                $item->add_meta_data('_ybh_donation_amount', $donation_amount, true);
+                $item->add_meta_data('_donation_org_id', $donation_cause_id, true);
+                $item->add_meta_data('_donation_org_img', $donation_cause_img, true);
+                $item->add_meta_data('Donation Organization', $donation_org_name, true);
+                $item->add_meta_data('_donation_org_name', $donation_org_name, true);
                 WC()->session->__unset('ybh_donation_amount');
                 WC()->session->__unset('ybh_donation_cause');
                 WC()->session->__unset('_donation_org_name');
@@ -372,6 +372,7 @@ class You_Be_Hero_Public {
             $donation_org_id = WC()->session->get( '_donation_org_id', 0 );
 
             if ($ybh_donation_amount && $ybh_donation_cause ) {
+                
                 $item = new WC_Order_Item_Product();
                 $item->set_name( __( $ybh_donation_cause, 'you-be-hero' ) ); // Custom item name
                 $item->set_product_id( 0 ); // No actual product
