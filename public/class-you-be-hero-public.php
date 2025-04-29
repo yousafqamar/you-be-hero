@@ -231,23 +231,23 @@ class You_Be_Hero_Public {
                 return;
             }
 
-            // Add fee if we have amount and cause
-            if (!empty($donation_cause)) {
-                $donation_amount = floatval($donation_amount);
-                $donation_cause = sanitize_text_field($donation_cause);
-
-                $fee_title = __('Donation for ', 'you-be-hero') . $donation_cause;
-                $fee_id = $cart->add_fee($fee_title, $donation_amount);
-
-                $last_fee_index = count($cart->fees) - 1;
-                if (isset($cart->fees[$last_fee_index]) && $cart->fees[$last_fee_index]->id === $fee_id) {
-                    $cart->fees[$last_fee_index]->_ybh_donation_amount = $donation_amount;
-                    $cart->fees[$last_fee_index]->ybh_donation_cause = $donation_cause;
-                    $cart->fees[$last_fee_index]->_donation_org_name = $donation_cause;
-                    $cart->fees[$last_fee_index]->ybh_donation_cause_id = $donation_cause_id;
-                    $cart->fees[$last_fee_index]->ybh_donation_cause_img = $donation_cause_img;
-                }
-            }
+//            // Add fee if we have amount and cause
+//            if (!empty($donation_cause)) {
+//                $donation_amount = floatval($donation_amount);
+//                $donation_cause = sanitize_text_field($donation_cause);
+//
+//                $fee_title = __('Donation for ', 'you-be-hero') . $donation_cause;
+//                $fee_id = $cart->add_fee($fee_title, $donation_amount);
+//
+//                $last_fee_index = count($cart->fees) - 1;
+//                if (isset($cart->fees[$last_fee_index]) && $cart->fees[$last_fee_index]->id === $fee_id) {
+//                    $cart->fees[$last_fee_index]->_ybh_donation_amount = $donation_amount;
+//                    $cart->fees[$last_fee_index]->ybh_donation_cause = $donation_cause;
+//                    $cart->fees[$last_fee_index]->_donation_org_name = $donation_cause;
+//                    $cart->fees[$last_fee_index]->ybh_donation_cause_id = $donation_cause_id;
+//                    $cart->fees[$last_fee_index]->ybh_donation_cause_img = $donation_cause_img;
+//                }
+//            }
         }
         
         // Handle AJAX request
@@ -287,7 +287,7 @@ class You_Be_Hero_Public {
             WC()->session->set('_donation_org_img', $org_img);
 
             // Trigger cart update to add/update the fee
-            WC()->cart->calculate_totals();
+//            WC()->cart->calculate_totals();
 
             wp_send_json_success([
                 'fees' => WC()->cart->get_fees(),
@@ -314,7 +314,7 @@ class You_Be_Hero_Public {
                 }
             }
             if (WC()->cart) {
-                WC()->cart->calculate_totals();
+//                WC()->cart->calculate_totals();
             }
         }
         // final
