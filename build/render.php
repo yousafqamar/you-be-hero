@@ -78,15 +78,12 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
                         <input name="donation_amount" id="donation-amount" type="hidden"/>';
 
         } else if ($donor == 'customer' &&  $donationType == 'roundup') {
+            $donationFee = $youbehero_data['donation_settings']['fee'] ?? 1;
 
-            $cart = WC()->cart;
-            $subtotal = $cart->get_subtotal();
-
-            $roundedSubtotal = ceil($subtotal);
-            $roundupValue = $roundedSubtotal - $subtotal;
+            $roundedFee = ceil($donationFee);
             $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">0,00'.$currency_symbol.'</span>';
 
-            $html .= '<button class="radio-button" data-value="'.$roundupValue.'" data-label="'.$roundupValue.'" >'.$roundupValue.'</button>';
+            $html .= '<button class="radio-button" data-value="'.$roundedFee.'" data-label="'.$roundedFee.'" >'.$roundedFee.'</button>';
             $html .= '<button class="delete-button">🗑</button>';
             $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
                     <input name="donation_amount" id="donation-amount" type="hidden"/>';
@@ -103,7 +100,6 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
 
         } else if ($donor == 'eshop' &&  $donationType == 'percentage') {
 
-    //        $percent = '15';
             $percent = $youbehero_data['donation_settings']['fixedPercentage'] ?? '15';
             $cart = WC()->cart;
             $subtotal = $cart->get_subtotal();
