@@ -302,8 +302,17 @@ class You_Be_Hero_Public {
             WC()->session->set('_donation_org_name', '');
             WC()->session->set('_donation_org_id', 0);
             WC()->session->set('_donation_org_img', '');
+            if (!WC()->cart) {
+                return;
+            }
 
-            // Trigger cart update to remove any existing fees
+            $fees = WC()->cart->get_fees();
+
+            foreach ($fees as $key => $fee) {
+                if (isset($fee->ybh_donation_cause) || isset($fee->_ybh_donation_amount)) {
+                    unset(WC()->cart->fees[$key]);
+                }
+            }
             if (WC()->cart) {
                 WC()->cart->calculate_totals();
             }
