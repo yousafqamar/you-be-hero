@@ -182,8 +182,12 @@ class You_Be_Hero_Public {
         // Enqueue scripts and styles
         function donation_widget_enqueue_scripts() {
             if (is_checkout()) {
+
+                // For testing all widgets
+                $ver = $_GET['ybh_update'] ?? '';
+
                 // Fetch data from the API
-                $data = $this->donation_widget_fetch_data();
+                $data = $this->donation_widget_fetch_data( isset($_GET['ybh_update']), $ver );
                 
                 wp_enqueue_style('donation-widget-style', YBH_PLUGIN_URL.'assets/css/style.css');
                 wp_enqueue_script('donation-widget-script', YBH_PLUGIN_URL.'assets/js/script.js', array('jquery'), null, true);
@@ -339,7 +343,7 @@ class You_Be_Hero_Public {
             }
         }
 
-        function donation_widget_fetch_data( $force_fetch = false ) {
+        function donation_widget_fetch_data( $force_fetch = false, $ver ) {
             if( !$force_fetch ){
                 $youbehero = get_option('ybh_donation_checkout_params', []);
 
@@ -348,7 +352,7 @@ class You_Be_Hero_Public {
                 }
             }
             
-            $response = wp_remote_get('https://yousafqamar.com/ybh/youbehero.json'); // Replace with the actual API endpoint
+            $response = wp_remote_get('https://yousafqamar.com/ybh/youbehero-'.$ver.'.json'); // Replace with the actual API endpoint
             if (is_wp_error($response)) {
                 return false;
             }

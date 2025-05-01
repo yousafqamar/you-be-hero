@@ -84,35 +84,37 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
 
             $roundedSubtotal = ceil($subtotal);
             $roundupValue = $roundedSubtotal - $subtotal;
-            $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">0,00'.$currency_symbol.'</span>';
+            $amount_cents = (float)$roundupValue * 100;
+            $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">'.$roundupValue.$currency_symbol.'</span>';
 
-            $html .= '<button class="radio-button" data-value="'.$roundupValue.'" data-label="'.$roundupValue.'" >'.$roundupValue.'</button>';
+            $html .= '<button class="radio-button" data-value="'.$amount_cents.'" data-label="'.$roundupValue.'" >'.$roundupValue.'</button>';
             $html .= '<button class="delete-button">🗑</button>';
             $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
-                    <input name="donation_amount" id="donation-amount" type="hidden"/>';
+                    <input name="donation_amount" id="donation-amount" type="hidden" value="'.$amount_cents.'"/>';
 
         } else if ($donor == 'eshop' &&  $donationType == 'fixed') {
 
             // $fixedValue = '1.00';
             $fixedValue = $youbehero_data['donation_settings']['fixed_amount'] ?? '1.00';
+            $amount_cents = (float)$fixedValue * 100;
 
             $headHtml .= '<span>Μέσω αυτής της αγοράς, θα προσφέρουμε '.$fixedValue.$currency_symbol.' για να υποστηρίξουμε έναν μη κερδοσκοπικό οργανισμό</span>';
-            $html .= '<input type="hidden" data-value="'.$fixedValue.'" data-label="'.$fixedValue.'" />';
+            $html .= '<input type="hidden" data-value="'.$amount_cents.'" data-label="'.$fixedValue.'" />';
             $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
-                    <input name="donation_amount" id="donation-amount" type="hidden" value="'.$fixedValue.'"/>';
+                    <input name="donation_amount" id="donation-amount" type="hidden" value="'.$amount_cents.'"/>';
 
         } else if ($donor == 'eshop' &&  $donationType == 'percentage') {
 
-    //        $percent = '15';
             $percent = $youbehero_data['donation_settings']['fixedPercentage'] ?? '15';
             $cart = WC()->cart;
             $subtotal = $cart->get_subtotal();
             $percentValue = $subtotal * $percent / 100;
+            $amount_cents = $percentValue * 100;
 
             $headHtml .= '<span>Θα δωρίσουμε το '.$percent.'% της παραγγελίας σας σε φιλανθρωπικό οργανισμό</span>';
-            $html .= '<input type="hidden" data-value="'.$percentValue.'" data-label="'.$percentValue.'" />';
+            $html .= '<input type="hidden" data-value="'.$amount_cents.'" data-label="'.$percentValue.'" />';
             $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
-                    <input name="donation_amount" id="donation-amount" type="hidden" value="'.$percentValue.'"/>';
+                    <input name="donation_amount" id="donation-amount" type="hidden" value="'.$amount_cents.'"/>';
 
         }
 
@@ -139,7 +141,7 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
                     <div class="donation-select  custom-dropdown-toggle" id="ybh-dd-select">
                         <div class="donation-text">
                             <img id="selected-cause-img" src="<?php echo YBH_PLUGIN_URL?>public/img/save-hood-img.png" alt="Logo">
-                            <span id="selectedOption"><?php echo __( 'Select a cause', YBH_TEXT_DOMAIN )?></span>
+                            <span id="selectedOption"><?php echo __( 'Please select a nonprofit organization', YBH_TEXT_DOMAIN )?></span>
                         </div>
                         <span class="dropdown-arrow">▼</span>
                     </div>
