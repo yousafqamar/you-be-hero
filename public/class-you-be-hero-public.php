@@ -235,12 +235,12 @@ class You_Be_Hero_Public {
                 return;
             }
 
-//            // Add fee if we have amount and cause
+            // Add fee if we have amount and cause
             if (!empty($donation_cause)) {
                 $donation_amount = floatval($donation_amount);
                 $donation_cause = sanitize_text_field($donation_cause);
 
-                $fee_title = __('Donation for ', 'you-be-hero') . $donation_cause;
+                $fee_title = __('Donation for '.$donation_cause, 'you-be-hero') . $donation_cause;
                 $fee_id = $cart->add_fee($fee_title, $donation_amount);
 
                 $last_fee_index = count($cart->fees) - 1;
@@ -283,6 +283,13 @@ class You_Be_Hero_Public {
                 return;
             }
 
+
+            // Add fee (WooCommerce native method)
+            WC()->cart->add_fee(
+                "Donation for {$org_name}",
+                $amount,
+                false, // Not taxable
+            );
             // Set session data
             WC()->session->set('ybh_donation_amount', $amount);
             WC()->session->set('ybh_donation_cause', $org_name);
@@ -330,11 +337,11 @@ class You_Be_Hero_Public {
             $donation_cause_id = WC()->session->get( '_donation_org_id', 0 );
             $donation_cause_img = WC()->session->get( '_donation_org_img', '' );
             if (isset($donation_cause_id)) {
-                $item->add_meta_data('_ybh_donation_amount', $donation_amount, true);
-                $item->add_meta_data('_donation_org_id', $donation_cause_id, true);
-                $item->add_meta_data('_donation_org_img', $donation_cause_img, true);
-                $item->add_meta_data('Donation Organization', $donation_org_name, true);
-                $item->add_meta_data('_donation_org_name', $donation_org_name, true);
+                $item->add_meta_data('_ybh_donation_amount', $donation_amount);
+                $item->add_meta_data('_donation_org_id', $donation_cause_id);
+                $item->add_meta_data('_donation_org_img', $donation_cause_img);
+                $item->add_meta_data('Donation Organization', $donation_org_name);
+                $item->add_meta_data('_donation_org_name', $donation_org_name);
                 WC()->session->__unset('ybh_donation_amount');
                 WC()->session->__unset('ybh_donation_cause');
                 WC()->session->__unset('_donation_org_name');
