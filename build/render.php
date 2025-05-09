@@ -137,11 +137,16 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
                     <?php echo $headHtml; ?>
                 </div>
 
-                <div class="custom-dropdown">
+                <div class="custom-dropdown" id="ybh-dd-dropdown">
                     <div class="donation-select  custom-dropdown-toggle" id="ybh-dd-select">
                         <div class="donation-text">
-                            <img id="selected-cause-img" src="<?php echo YBH_PLUGIN_URL?>public/img/save-hood-img.png" alt="Logo">
-                            <span id="selectedOption"><?php echo __( 'Please select a nonprofit organization', YBH_TEXT_DOMAIN )?></span>
+                            <?php if( !empty( WC()->session->get( 'ybh_donation_cause' ) ) ) { ?>
+                                <img id="selected-cause-img" src="<?php echo WC()->session->get( '_donation_org_img' ); ?>" alt="Logo">
+                                <span id="selectedOption"><?php echo __( WC()->session->get( 'ybh_donation_cause' ), YBH_TEXT_DOMAIN )?></span>
+                            <?php } else { ?>
+                                <img id="selected-cause-img" src="<?php echo YBH_PLUGIN_URL?>public/img/save-hood-img.png" alt="Logo">
+                                <span id="selectedOption"><?php echo __( 'Please select a nonprofit organization', YBH_TEXT_DOMAIN )?></span>
+                            <?php } ?>
                         </div>
                         <span class="dropdown-arrow">▼</span>
                     </div>
@@ -150,9 +155,9 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
                         <?php
                         foreach ($causes as $key=>$cause) {?>
                         <div class="custom-dropdown-option ybh-dd-option" id="<?php echo $key;?>-ybh-dd-option" data-image="<?php echo $cause['image']?>" data-text="<?php echo $cause['label']?>" data-value="<?php echo $cause['value']?>")">
-                        <img alt="<?php echo $cause['label']?>" src="<?php echo $cause['image']?>"/>
-                        <span class="text-gray-700"><?php echo $cause['label']?></span>
-                    </div>
+                            <img alt="<?php echo $cause['label']?>" src="<?php echo $cause['image']?>"/>
+                            <span class="text-gray-700"><?php echo $cause['label']?></span>
+                        </div>
                     <?php   } ?>
                 </div>
             </div>

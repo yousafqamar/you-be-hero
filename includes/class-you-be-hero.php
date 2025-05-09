@@ -206,7 +206,7 @@ class You_Be_Hero {
                 $this->loader->add_action('woocommerce_checkout_create_order_fee_item', $plugin_public,'woocommerce_checkout_create_order_fee_item', 10, 4);
 //        $this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'woocommerce_checkout_update_order_meta_fun', 10, 2 );
                 $this->loader->add_action( 'woocommerce_checkout_create_order', $plugin_public, 'save_custom_data_from_session', 10, 2 );
-//		$this->loader->add_action( 'woocommerce_get_order_item_totals', $plugin_public, 'woocommerce_get_order_item_totals_fun', 10, 2 );
+//		$this->loader->add_filter( 'woocommerce_get_order_item_totals', $plugin_public, 'woocommerce_get_order_item_totals_fun', 10, 2 );
 
 		$this->loader->add_action( 'init', $plugin_public, 'donation_widget_register_block' );
 		$this->loader->add_action( 'init', $plugin_public, 'youbehero_public_shortcodes' );

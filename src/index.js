@@ -39,7 +39,7 @@ registerBlockType(metadata.name, {
 
         return (
             <div {...useBlockProps()}>
-                <h3>{__('YouBeHero Dontion', 'woocommerce')}</h3>
+                <h3>{__('YouBeHero Donation', 'woocommerce')}</h3>
                 <p>{__('YouBeHero donation widget will reside here. For easy relocation use List overview option (Shift+Alt+O)', 'woocommerce')}</p>
                 
             </div>

@@ -148,9 +148,11 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $(document).on('click', '#ybh-dd-select', function () {
+        // $(document).on('click', '#ybh-dd-select', function () {
+        $(document).on('click', '#ybh-dd-dropdown', function () {
             $('#dropdownMenu').toggleClass('show');
-          });
+        });
+
         $(document).on('click', '.ybh-dd-option', function (event) {
             event.preventDefault();
             const selectedOption = document.getElementById('selectedOption');
