@@ -11,6 +11,8 @@ jQuery(document).ready(function($) {
         const $causeSelect = $('#donation-cause');
         const $amountsContainer = $('#donation-amounts');
         let currencyCode = wcSettings?.currency?.code || 'USD';
+        let currencySymbol = wcSettings?.currency?.symbol || '$';
+
         const addDonationFee = async (orgId, orgName, amount, orgImg) => {
             try {
                 // 1. Get current cart state
@@ -192,7 +194,7 @@ jQuery(document).ready(function($) {
             const donationAmountEle = document.getElementById('donation-amount');
             donationAmountEle.value = donation_amount;
 //            selectRadioButton(donation_amount);
-            $('.donation-amount-pill').text(donation_label);
+            $('.donation-amount-pill').text(donation_label + currencySymbol);
             $('.donation-amounts .radio-button').removeClass('selected');
             $(this).addClass('selected');
             $('.donation-amounts .donation-amount').change();

@@ -83,14 +83,41 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
             $subtotal = $cart->get_subtotal();
 
             $roundedSubtotal = ceil($subtotal);
-            $roundupValue = $roundedSubtotal - $subtotal;
+            switch ( true ) {
+                case ( $roundedSubtotal <= 10 ):
+                    $rounded = ceil( $roundedSubtotal * 2 ) / 2; // Nearest €0.50
+                    break;
+
+                case ( $roundedSubtotal <= 50 ):
+                    $rounded = ceil( $roundedSubtotal ); // Nearest €1
+                    break;
+
+                case ( $roundedSubtotal <= 100 ):
+                    $rounded = ceil( $roundedSubtotal / 5 ) * 5; // Nearest €5
+                    break;
+
+                case ( $roundedSubtotal <= 500 ):
+                    $rounded = ceil( $roundedSubtotal / 10 ) * 10; // Nearest €10
+                    break;
+
+                case ( $roundedSubtotal > 500 ):
+                    $rounded = ceil( $roundedSubtotal / 10 ) * 10; // Also Nearest €10
+                    break;
+
+                default:
+                    $rounded = $roundedSubtotal; // Fallback
+            }
+            $roundupValue =  round($rounded - $roundedSubtotal, 2);
+
+//            $roundupValue = $roundedSubtotal - $subtotal;
             $amount_cents = (float)$roundupValue * 100;
             $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">'.$roundupValue.$currency_symbol.'</span>';
 
-            $html .= '<button class="radio-button" data-value="'.$amount_cents.'" data-label="'.$roundupValue.'" >'.$roundupValue.'</button>';
+            $selected = !empty( $roundupValue ) ? 'selected' : '';
+            $html .= '<button class="radio-button '.$selected.'" data-value="'.$amount_cents.'" data-label="'.$roundupValue.'" >'.$roundupValue.$currency_symbol.'</button>';
             $html .= '<button class="delete-button">🗑</button>';
             $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
-                    <input name="donation_amount" id="donation-amount" type="hidden" value="'.$amount_cents.'"/>';
+                <input name="donation_amount" id="donation-amount" type="hidden" value="'.$amount_cents.'"/>';
 
         } else if ($donor == 'eshop' &&  $donationType == 'fixed') {
 
