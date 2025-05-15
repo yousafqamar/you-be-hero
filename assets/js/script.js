@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
             return;
         }
 
-        const { causes, amounts } = ybh_donation_checkout_params || {};
+        const { causes, amounts, selected_amount } = ybh_donation_checkout_params || {};
 
         // Populate causes and amounts
         const $causeSelect = $('#donation-cause');
@@ -243,7 +243,10 @@ jQuery(document).ready(function($) {
             bar.style.width = '0%';
           }, 500); // Wait for the transition to complete
         }
-
+        
+        console.log( 'selected_amount: ', selected_amount);
+        let selected_amount_cents = selected_amount * 100;
+        $(`button[data-value="${selected_amount_cents}"]`).click();
 });
 
 
