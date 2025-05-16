@@ -64,13 +64,15 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
     if( $checkWActive ){
         $html = $headHtml = '';
         if ( $donor == 'customer' &&  $donationType == 'fixed' && !empty($amounts) ) {
-
-                $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">0,00'.$currency_symbol.'</span>';
+                $donation_amount = WC()->session->get('ybh_donation_amount', 0);
+                $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">'.number_format((float)$donation_amount, 2, '.', '').$currency_symbol.'</span>';
 
                 foreach ($amounts as $amount) {
                     $amount_cents = (int)$amount * 100;
 
-                    $html .= '<button class="radio-button" data-value="'.$amount_cents.'" data-label="'.$amount.'" >'.$amount.'</button>';
+                    $selected = $donation_amount == (float)$amount ? 'selected' : '';
+
+                    $html .= '<button class="radio-button '.$selected.'" data-value="'.$amount_cents.'" data-label="'.$amount.'">'.$amount.'</button>';
 
                 }
                 $html .= '<button class="delete-button">🗑</button>';
