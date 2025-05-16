@@ -205,7 +205,7 @@ class You_Be_Hero_Public {
 
                     $amounts = array_values($data['donation_settings']['fixed_amounts']);
 
-                    $donation_amount = WC()->session->get('ybh_donation_amount', 0);
+                    $donation_amount = WC()->session->get('ybh_donation_amount', 0);//let's pick current selection
                     // Localize script with the data
                     wp_localize_script('donation-widget-script', 'ybh_donation_checkout_params', array(
                         'ajax_url' => admin_url('admin-ajax.php'),

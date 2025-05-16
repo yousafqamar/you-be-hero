@@ -246,7 +246,8 @@ jQuery(document).ready(function($) {
         
         console.log( 'selected_amount: ', selected_amount);
         let selected_amount_cents = selected_amount * 100;
-        $(`button[data-value="${selected_amount_cents}"]`).click();
+        if(  $(`button[data-value="${selected_amount_cents}"]`).length )//let's check if there is any current selected amount
+            $(`button[data-value="${selected_amount_cents}"]`).click();
 });
 
 
