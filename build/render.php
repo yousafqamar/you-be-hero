@@ -79,45 +79,49 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
 
         } else if ($donor == 'customer' &&  $donationType == 'roundup') {
 
-            $cart = WC()->cart;
-            $subtotal = $cart->get_subtotal();
+            if (function_exists('WC') && WC() !== null && WC()->cart !== null) {
+                $cart = WC()->cart;
+                $subtotal = $cart->get_subtotal();
 
-            $roundedSubtotal = ceil($subtotal);
-            switch ( true ) {
-                case ( $roundedSubtotal <= 10 ):
-                    $rounded = ceil( $roundedSubtotal * 2 ) / 2; // Nearest €0.50
-                    break;
+                $roundedSubtotal = ceil($subtotal);
+                switch (true) {
+                    case ($roundedSubtotal <= 10):
+                        $rounded = ceil($roundedSubtotal * 2) / 2; // Nearest €0.50
+                        break;
 
-                case ( $roundedSubtotal <= 50 ):
-                    $rounded = ceil( $roundedSubtotal ); // Nearest €1
-                    break;
+                    case ($roundedSubtotal <= 50):
+                        $rounded = ceil($roundedSubtotal); // Nearest €1
+                        break;
 
-                case ( $roundedSubtotal <= 100 ):
-                    $rounded = ceil( $roundedSubtotal / 5 ) * 5; // Nearest €5
-                    break;
+                    case ($roundedSubtotal <= 100):
+                        $rounded = ceil($roundedSubtotal / 5) * 5; // Nearest €5
+                        break;
 
-                case ( $roundedSubtotal <= 500 ):
-                    $rounded = ceil( $roundedSubtotal / 10 ) * 10; // Nearest €10
-                    break;
+                    case ($roundedSubtotal <= 500):
+                        $rounded = ceil($roundedSubtotal / 10) * 10; // Nearest €10
+                        break;
 
-                case ( $roundedSubtotal > 500 ):
-                    $rounded = ceil( $roundedSubtotal / 10 ) * 10; // Also Nearest €10
-                    break;
+                    case ($roundedSubtotal > 500):
+                        $rounded = ceil($roundedSubtotal / 10) * 10; // Also Nearest €10
+                        break;
 
-                default:
-                    $rounded = $roundedSubtotal; // Fallback
+                    default:
+                        $rounded = $roundedSubtotal; // Fallback
+                }
+                $roundupValue = round($rounded - $roundedSubtotal, 2);
+            } else {
+                $roundupValue = 0;
             }
-            $roundupValue =  round($rounded - $roundedSubtotal, 2);
+                //            $roundupValue = $roundedSubtotal - $subtotal;
+                $amount_cents = (float)$roundupValue * 100;
+                $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">' . $roundupValue . $currency_symbol . '</span>';
 
-//            $roundupValue = $roundedSubtotal - $subtotal;
-            $amount_cents = (float)$roundupValue * 100;
-            $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">'.$roundupValue.$currency_symbol.'</span>';
+                $selected = !empty($roundupValue) ? 'selected' : '';
+                $html .= '<button class="radio-button ' . $selected . '" data-value="' . $amount_cents . '" data-label="' . $roundupValue . '" >' . $roundupValue . $currency_symbol . '</button>';
+                $html .= '<button class="delete-button">🗑</button>';
+                $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
+                    <input name="donation_amount" id="donation-amount" type="hidden" value="' . $amount_cents . '"/>';
 
-            $selected = !empty( $roundupValue ) ? 'selected' : '';
-            $html .= '<button class="radio-button '.$selected.'" data-value="'.$amount_cents.'" data-label="'.$roundupValue.'" >'.$roundupValue.$currency_symbol.'</button>';
-            $html .= '<button class="delete-button">🗑</button>';
-            $html .= '<input name="donation_cause" id="donation-cause" type="hidden"/>
-                <input name="donation_amount" id="donation-amount" type="hidden" value="'.$amount_cents.'"/>';
 
         } else if ($donor == 'eshop' &&  $donationType == 'fixed') {
 
@@ -167,7 +171,7 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
                 <div class="custom-dropdown" id="ybh-dd-dropdown">
                     <div class="donation-select  custom-dropdown-toggle" id="ybh-dd-select">
                         <div class="donation-text">
-                            <?php if( !empty( WC()->session->get( 'ybh_donation_cause' ) ) ) { ?>
+                            <?php if( isset( WC()->session ) && !empty( WC()->session->get( 'ybh_donation_cause' ) ) ) { ?>
                                 <img id="selected-cause-img" src="<?php echo WC()->session->get( '_donation_org_img' ); ?>" alt="Logo">
                                 <span id="selectedOption"><?php echo __( WC()->session->get( 'ybh_donation_cause' ), YBH_TEXT_DOMAIN )?></span>
                             <?php } else { ?>
