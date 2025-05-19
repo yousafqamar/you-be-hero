@@ -151,8 +151,16 @@ jQuery(document).ready(function($) {
         });
 
         // $(document).on('click', '#ybh-dd-select', function () {
-        $(document).on('click', '#ybh-dd-dropdown', function () {
-            $('#dropdownMenu').toggleClass('show');
+        $(document).on('click', '#ybh-dd-dropdown, #donation-text', function () {
+            console.log( $(this).attr('class'),$('#dropdownMenu').hasClass('show'));
+            if( $('#dropdownMenu').hasClass('show') ){
+                $('#dropdownMenu').removeClass('show');
+            }else{
+                $('#dropdownMenu').addClass('show');
+                setTimeout(function(){
+                $('#dropdownMenu').addClass('show');
+                },100);
+            }
         });
 
         $(document).on('click', '.ybh-dd-option', function (event) {
