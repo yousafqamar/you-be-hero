@@ -65,7 +65,7 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
         $html = $headHtml = '';
         if ( $donor == 'customer' &&  $donationType == 'fixed' && !empty($amounts) ) {
                 $donation_amount = WC()->session->get('ybh_donation_amount', 0);
-                $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">'.number_format((float)$donation_amount, 2, '.', '').$currency_symbol.'</span>';
+                $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="pill-container"><span class="donation-amount-pill">'.number_format((float)$donation_amount, 2, '.', '').'</span>'.$currency_symbol.'</span>';
 
                 foreach ($amounts as $amount) {
                     $amount_cents = (int)$amount * 100;
