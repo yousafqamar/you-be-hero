@@ -270,7 +270,7 @@ class You_Be_Hero_Public {
             }
 
             // If amount is empty or zero, remove the fee
-            if (empty($amount) || $amount <= 0) {
+            if (empty($amount) || $amount <= 0 || empty($org_name) || empty($org_id)) {
                 $this->donation_widget_remove_fee();
                 wp_send_json_success([
                     'fees' => WC()->cart->get_fees(),

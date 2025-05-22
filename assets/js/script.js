@@ -50,6 +50,7 @@ jQuery(document).ready(function($) {
 
                 showLoader();
                 const amountF = isNaN(Number(amount)) ? 0 : Number(amount)/100;
+                const force_remove = isNaN(Number(orgId)) ? 1 : 0;
                 //server side update
                 $.ajax({
                     type: 'POST',
@@ -60,6 +61,7 @@ jQuery(document).ready(function($) {
                         amount: amountF,
                         org_name: orgName,
                         org_img: orgImg,
+                        force_remove: force_remove,
                         meta_data: [
                             { key: '_donation_org_id', value: orgId },
                             { key: '_donation_org_name', value: orgName },
@@ -103,9 +105,9 @@ jQuery(document).ready(function($) {
         };
         
         function add_donation_to_cart(){
-            console.log( 'add_donation_to_cart' )
             const orgId = $('#donation-cause').val();
             const amount = $('#donation-amount').val();
+            console.log( 'add_donation_to_cart', 'orgId: ', orgId )
 
             const selectedCause = causes.find(cause =>cause.value === parseInt(orgId));
             const orgName = selectedCause ? selectedCause.label : '';
@@ -151,14 +153,14 @@ jQuery(document).ready(function($) {
         });
 
         // $(document).on('click', '#ybh-dd-select', function () {
-        $(document).on('click', '#ybh-dd-dropdown, #donation-text', function () {
+        $(document).on('click', '#ybh-dd-select', function () {
             console.log( $(this).attr('class'),$('#dropdownMenu').hasClass('show'));
             if( $('#dropdownMenu').hasClass('show') ){
                 $('#dropdownMenu').removeClass('show');
             }else{
-                $('#dropdownMenu').addClass('show');
+//                $('#dropdownMenu').addClass('show');
                 setTimeout(function(){
-                $('#dropdownMenu').addClass('show');
+                    $('#dropdownMenu').addClass('show');
                 },100);
             }
         });
@@ -168,13 +170,18 @@ jQuery(document).ready(function($) {
             const selectedOption = document.getElementById('selectedOption');
             const donationCauseEle = document.getElementById('donation-cause');
             const causeImgEle = document.getElementById('selected-cause-img');
-
+//console.log('text: ', $(this), $(this).data("text"));
             $('#dropdownMenu').removeClass('show');
             selectedOption.textContent = $(this).data("text");
             console.log('Selected Value:', $(this).data("value"));
             donationCauseEle.value = $(this).data("value");
             causeImgEle.src = $(this).data("image");
-
+            
+            if( !$(this).data("value") ){
+                $('#select-np-ybh-dd-option').addClass('hidden');
+            }else{
+                $('#select-np-ybh-dd-option').removeClass('hidden');
+            }
             if ( validate_donation_data() ) {
                 add_donation_to_cart( );
             }
