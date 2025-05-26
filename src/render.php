@@ -60,7 +60,7 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
     }
 
     $classString = implode(' ', $classes);
-
+    
     if( $checkWActive ){
         $html = $headHtml = '';
         if ( $donor == 'customer' &&  $donationType == 'fixed' && !empty($amounts) ) {
@@ -85,37 +85,36 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
                 $cart = WC()->cart;
                 $subtotal = $cart->get_subtotal();
 
-                $roundedSubtotal = ceil($subtotal);
+                $rounded = 0;
+
                 switch (true) {
-                    case ($roundedSubtotal <= 10):
-                        $rounded = ceil($roundedSubtotal * 2) / 2; // Nearest €0.50
+                    case ($subtotal <= 10):
+                        // Small: round up to nearest €0.50
+                        $rounded = ceil($subtotal * 2) / 2;
                         break;
-
-                    case ($roundedSubtotal <= 50):
-                        $rounded = ceil($roundedSubtotal); // Nearest €1
+                    case ($subtotal <= 50):
+                        // Medium: round up to nearest €1
+                        $rounded = ceil($subtotal);
                         break;
-
-                    case ($roundedSubtotal <= 100):
-                        $rounded = ceil($roundedSubtotal / 5) * 5; // Nearest €5
+                    case ($subtotal <= 100):
+                        // Large: round up to nearest €5
+                        $rounded = ceil($subtotal / 5) * 5;
                         break;
-
-                    case ($roundedSubtotal <= 500):
-                        $rounded = ceil($roundedSubtotal / 10) * 10; // Nearest €10
+                    case ($subtotal <= 500):
+                        // Maximum: round up to nearest €10
+                        $rounded = ceil($subtotal / 10) * 10;
                         break;
-
-                    case ($roundedSubtotal > 500):
-                        $rounded = ceil($roundedSubtotal / 10) * 10; // Also Nearest €10
-                        break;
-
                     default:
-                        $rounded = $roundedSubtotal; // Fallback
+                        // Exceptional: round up to nearest €10
+                        $rounded = ceil($subtotal / 10) * 10;
                 }
-                $roundupValue = round($rounded - $roundedSubtotal, 2);
             } else {
-                $roundupValue = 0;
+                $rounded = 0;
             }
-                //            $roundupValue = $roundedSubtotal - $subtotal;
+
+                $roundupValue = round($rounded - $subtotal, 2);
                 $amount_cents = (float)$roundupValue * 100;
+//                echo '$amount_cents: '.$amount_cents;exit;
                 $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">' . $roundupValue . $currency_symbol . '</span>';
 
                 $selected = !empty($roundupValue) ? 'selected' : '';

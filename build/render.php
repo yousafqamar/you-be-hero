@@ -60,7 +60,7 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
     }
 
     $classString = implode(' ', $classes);
-
+    
     if( $checkWActive ){
         $html = $headHtml = '';
         if ( $donor == 'customer' &&  $donationType == 'fixed' && !empty($amounts) ) {
@@ -114,6 +114,7 @@ if( !empty($youbehero_data) && !empty($youbehero_data['selected_causes']) ){
 
                 $roundupValue = round($rounded - $subtotal, 2);
                 $amount_cents = (float)$roundupValue * 100;
+//                echo '$amount_cents: '.$amount_cents;exit;
                 $headHtml .= '<span>Θα θέλατε να κάνετε μια δωρεά;</span><span class="donation-amount-pill">' . $roundupValue . $currency_symbol . '</span>';
 
                 $selected = !empty($roundupValue) ? 'selected' : '';
