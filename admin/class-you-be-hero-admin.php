@@ -119,13 +119,13 @@ class You_Be_Hero_Admin {
                 }
             }
 
-            if ($donation_total > 0) {
-                echo '<tr>';
-                echo '<td class="label">' . __('Donation:', 'woocommerce') . '</td>';
-                echo '<td width="1%"></td>';
-                echo '<td class="total"><strong>' . wc_price($donation_total) . '</strong></td>';
-                echo '</tr>';
-            }
+//            if ($donation_total > 0) {
+//                echo '<tr>';
+//                echo '<td class="label">' . __('Donation:', 'woocommerce') . '</td>';
+//                echo '<td width="1%"></td>';
+//                echo '<td class="total"><strong>' . wc_price($donation_total) . '</strong></td>';
+//                echo '</tr>';
+//            }
 
             if ($other_fees_total > 0) {
                 echo '<tr>';

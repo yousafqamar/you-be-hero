@@ -209,7 +209,7 @@ jQuery(document).ready(function($) {
             const donationAmountEle = document.getElementById('donation-amount');
             donationAmountEle.value = donation_amount;
 //            selectRadioButton(donation_amount);
-            $('.donation-amount-pill').text(donation_label);
+            $('.donation-amount-pill').text(donation_label + currencySymbol);
             $('.donation-amounts .radio-button').removeClass('selected');
             $(this).addClass('selected');
             $('.donation-amounts .donation-amount').change();
@@ -224,7 +224,7 @@ jQuery(document).ready(function($) {
             console.log($(this));
             const donationAmountEle = document.getElementById('donation-amount');
             donationAmountEle.value = '';
-            $('.donation-amount-pill').text('0,00');
+            $('.donation-amount-pill').text('0,00' + currencySymbol);
             $('.donation-amounts .radio-button').removeClass('selected');
             $('.donation-amounts .donation-amount').change();
             add_donation_to_cart( );
