@@ -5,6 +5,24 @@ jQuery(document).ready(function($) {
             return;
         }
 
+        // Use event delegation for dynamically generated buttons
+        $('.donation-btn.selected').css({
+            'background-color': $(this).data('btnclr'),
+            'border-color': $(this).data('btnclr')
+        })
+        $(document).on('mouseenter', '.donation-btn', function() {
+            $(this).css({
+                'background-color': $(this).data('btnclr'),
+                'border-color': $(this).data('btnclr')
+            });
+        }).on('mouseleave', '.donation-btn', function() {
+            $(this).css({
+                'background-color': '',
+                'border-color': ''
+            });
+        });
+
+
         const { causes, amounts, selected_amount } = ybh_donation_checkout_params || {};
 
         // Populate causes and amounts
