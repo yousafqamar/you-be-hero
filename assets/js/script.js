@@ -6,19 +6,27 @@ jQuery(document).ready(function($) {
         }
 
         // Use event delegation for dynamically generated buttons
-        $('.donation-btn.selected').css({
-            'background-color': $(this).data('btnclr'),
-            'border-color': $(this).data('btnclr')
-        })
         $(document).on('mouseenter', '.donation-btn', function() {
             $(this).css({
                 'background-color': $(this).data('btnclr'),
-                'border-color': $(this).data('btnclr')
+                'border-color': $(this).data('btnclr'),
+                'color': "#ffffff"
             });
         }).on('mouseleave', '.donation-btn', function() {
             $(this).css({
                 'background-color': '',
-                'border-color': ''
+                'border-color': '',
+                'color': ""
+            });
+        });
+
+        $(document).on('mouseenter', '.delete-button', function() {
+            $('button.donation-btn.delete-button:hover path').css({
+                'fill': '#ffffff'
+            });
+        }).on('mouseleave', '.delete-button', function() {
+            $('button.donation-btn.delete-button path').css({
+                'fill': "#000"
             });
         });
 

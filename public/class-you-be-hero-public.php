@@ -52,29 +52,7 @@ class You_Be_Hero_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-                add_action('wp_head', function() {
-
-                    $youbehero_data = get_option('ybh_donation_checkout_params');
-                    if( !empty($youbehero_data) ){
-                        $btn_color = $youbehero_data['widget_configurations']['checkout_page']['btn_color'] ?? "#3b82f6";
-                        ?>
-
-                    <style>
-                        .donation-buttons button, .donation-buttons .radio-button {
-                            border-color: <?php echo $btn_color?>;
-                        }
-                        .donation-buttons button:not(.selected), .donation-buttons .radio-button:not(.selected) {
-                            color: <?php echo $btn_color?>;
-                        }
-                        .radio-button.selected {
-                            background-color: <?php echo $btn_color?>;
-                        }
-                    </style>    
-                        <?php
-                    }
-                });
-            
-        }
+    }
         
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
@@ -203,7 +181,7 @@ class You_Be_Hero_Public {
                         ];
                     }, $data['selected_causes']);
 
-                    $amounts = array_values($data['donation_settings']['fixed_amounts']);
+                    $amounts = array_values($data['donation_settings']['fixed_amounts'] ?? []);
 
                     $donation_amount = WC()->session->get('ybh_donation_amount', 0);//let's pick current selection
                     // Localize script with the data
@@ -362,7 +340,9 @@ class You_Be_Hero_Public {
                 }
             }
             
-            $response = wp_remote_get('https://yousafqamar.com/ybh/youbehero-'.$ver.'.json'); // Replace with the actual API endpoint
+//            $response = wp_remote_get('https://yousafqamar.com/ybh/youbehero-'.$ver.'.json'); // Replace with the actual API endpoint
+//            $response = wp_remote_get('https://pastefy.app/EWfPlWiv/raw');
+            $response = wp_remote_get('https://pastefy.app/2LMp5KdG/raw');
             if (is_wp_error($response)) {
                 return false;
             }
@@ -613,6 +593,26 @@ class You_Be_Hero_Public {
             WC()->session->__unset('_donation_org_name');
             WC()->session->__unset('_donation_org_id');
             WC()->session->__unset('_donation_org_img');
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function ybh_head_script() {
+
+        $youbehero_data = get_option('ybh_donation_checkout_params');
+        if( !empty($youbehero_data) ){
+            $btn_color = $youbehero_data['widget_configurations']['checkout_page']['checkout_page']['btn_color'] ?? "#3b82f6";
+            ?>
+
+            <style>
+                .donation-btn.selected {
+                    border-color: <?php echo $btn_color?>;
+                    background-color: <?php echo $btn_color?>;
+                }
+            </style>
+            <?php
         }
     }
 }

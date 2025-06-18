@@ -78,10 +78,10 @@
     flex: 1;
     padding: 8px;
     /*border: 1px solid #007bff;*/
-    border: 1px solid;
+    /*border: 1px solid;*/
     background: white;
     /*color: #007bff;*/
-    font-weight: bold;
+    /*font-weight: bold;*/
     cursor: pointer;
     border-radius: 5px;
 }
@@ -220,16 +220,12 @@
     gap: 10px;
 }
 
-.donation-buttons .radio-button:hover {
-    opacity: 0.8;
-}
-
 .donation-buttons button {
     flex: 1;
     padding: 10px;
     border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
+    /*font-size: 14px;*/
+    /*font-weight: 600;*/
     border: 1px solid #ccc;
     background: white;
     cursor: pointer;
@@ -321,4 +317,8 @@
 /* Hidden State */
 .hidden {
   display: none;
+}
+
+.custom-dropdown{
+    color: #000000 !important;
 }

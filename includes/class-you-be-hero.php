@@ -221,6 +221,7 @@ class You_Be_Hero {
 //            $this->loader->add_action('woocommerce_blocks_loaded', $this, 'register_blocks_endpoint', 20);
 
         $this->loader->add_action( 'woocommerce_thankyou', $plugin_public, 'ybh_order_received_action' );
+        $this->loader->add_action( 'wp_head', $plugin_public, 'ybh_head_script' );
 	}
         
         /*not applied due to dependency on woo block plugin, not all of the stores might have this addon*/
